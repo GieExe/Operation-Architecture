@@ -1,34 +1,11 @@
 import Header from "../components/Header";
 import Sidebar from "../components/Sidebar";
-import FilterBar from "../components/FilterBar";
-import FrameworkCard from "../components/FrameworkCard";
+import MainContent from "../components/MainContent";
 import ComparisonMatrix from "../components/ComparisonMatrix";
 import ClientScript from "../components/ClientScript";
 import { frameworks } from "../data/frameworks";
 
-interface PageProps {
-  searchParams: Promise<{ q?: string; cat?: string }>;
-}
-
-export default async function Home({ searchParams }: PageProps) {
-  const resolvedParams = await searchParams;
-  const q = resolvedParams.q?.toLowerCase().trim() || "";
-  const activeCat = resolvedParams.cat || "all";
-
-  // Filter frameworks on the server based on query & category
-  const filteredFrameworks = frameworks.filter((fw) => {
-    const matchesCat = activeCat === "all" || fw.cat === activeCat;
-    const matchesQuery = !q || fw.name.toLowerCase().includes(q) || fw.id.includes(q);
-    return matchesCat && matchesQuery;
-  });
-
-  const mobileFws = filteredFrameworks.filter((f) => f.cat === "mobile");
-  const frontendFws = filteredFrameworks.filter((f) => f.cat === "frontend");
-  const backendFws = filteredFrameworks.filter((f) => f.cat === "backend");
-  const desktopFws = filteredFrameworks.filter((f) => f.cat === "desktop");
-
-  const totalCount = filteredFrameworks.length;
-
+export default function Home() {
   return (
     <>
       <Header />
@@ -70,88 +47,7 @@ export default async function Home({ searchParams }: PageProps) {
         </section>
 
         {/* CONTENT */}
-        <div className="content-container">
-          <FilterBar activeCat={activeCat} searchQuery={q} />
-
-          {totalCount === 0 ? (
-            <div style={{ padding: "60px 0", textAlign: "center", color: "var(--text-secondary)" }}>
-              <h3>No frameworks found matching "{q}"</h3>
-              <p style={{ marginTop: "8px", fontSize: "14px", color: "var(--text-muted)" }}>
-                Try adjusting your search query or switching categories.
-              </p>
-            </div>
-          ) : (
-            <>
-              {/* MOBILE */}
-              {mobileFws.length > 0 && (
-                <>
-                  <div className="section-header cat-section" data-cat="mobile">
-                    <h2>Mobile Frameworks</h2>
-                    <p className="section-desc">
-                      Cross-platform UI rendering engines and native mobile development architectures.
-                    </p>
-                  </div>
-                  <div className="frameworks-grid cat-section" data-cat="mobile">
-                    {mobileFws.map((fw) => (
-                      <FrameworkCard key={fw.id} framework={fw} />
-                    ))}
-                  </div>
-                </>
-              )}
-
-              {/* FRONTEND */}
-              {frontendFws.length > 0 && (
-                <>
-                  <div className="section-header cat-section" data-cat="frontend">
-                    <h2>Frontend Web Frameworks</h2>
-                    <p className="section-desc">
-                      Modern client-side libraries, SSR systems, and compilation-based web platforms.
-                    </p>
-                  </div>
-                  <div className="frameworks-grid cat-section" data-cat="frontend">
-                    {frontendFws.map((fw) => (
-                      <FrameworkCard key={fw.id} framework={fw} />
-                    ))}
-                  </div>
-                </>
-              )}
-
-              {/* BACKEND */}
-              {backendFws.length > 0 && (
-                <>
-                  <div className="section-header cat-section" data-cat="backend">
-                    <h2>Backend Frameworks</h2>
-                    <p className="section-desc">
-                      Server-side runtime frameworks, database isolation layers, and microservices foundations.
-                    </p>
-                  </div>
-                  <div className="frameworks-grid cat-section" data-cat="backend">
-                    {backendFws.map((fw) => (
-                      <FrameworkCard key={fw.id} framework={fw} />
-                    ))}
-                  </div>
-                </>
-              )}
-
-              {/* DESKTOP */}
-              {desktopFws.length > 0 && (
-                <>
-                  <div className="section-header cat-section" data-cat="desktop">
-                    <h2>Desktop Frameworks</h2>
-                    <p className="section-desc">
-                      Windows desktop interface foundations leveraging hardware-accelerated rendering and strict data decoupling patterns.
-                    </p>
-                  </div>
-                  <div className="frameworks-grid cat-section" data-cat="desktop">
-                    {desktopFws.map((fw) => (
-                      <FrameworkCard key={fw.id} framework={fw} />
-                    ))}
-                  </div>
-                </>
-              )}
-            </>
-          )}
-        </div>
+        <MainContent frameworks={frameworks} />
 
         {/* COMPARISON MATRIX */}
         <ComparisonMatrix />
