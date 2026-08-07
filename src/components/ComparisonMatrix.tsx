@@ -247,6 +247,95 @@ export default function ComparisonMatrix() {
               <td>electron-vite + electron-builder</td>
               <td>Vitest + Playwright</td>
             </tr>
+            <tr>
+              <td>
+                <span className="cat-indicator" style={{ background: "var(--green)" }}></span>
+                FastAPI
+              </td>
+              <td>DI + Service Layer</td>
+              <td>Depends() + Pydantic v2</td>
+              <td>FastAPI Depends()</td>
+              <td>pytest + httpx + testcontainers</td>
+            </tr>
+            <tr>
+              <td>
+                <span className="cat-indicator" style={{ background: "var(--green)" }}></span>
+                Hono
+              </td>
+              <td>Edge-First Middleware + RPC</td>
+              <td>Context chain + Zod</td>
+              <td>Middleware context (c.env)</td>
+              <td>Vitest + @hono/vite-ssg</td>
+            </tr>
+            <tr>
+              <td>
+                <span className="cat-indicator" style={{ background: "var(--green)" }}></span>
+                Bun / Elysia</td>
+              <td>Decorator-Driven + Eden Treaty</td>
+              <td>Lifecycle + Guard + Decorate</td>
+              <td>Plugin decoration (typed)</td>
+              <td>Bun test (built-in)</td>
+            </tr>
+            <tr>
+              <td>
+                <span className="cat-indicator" style={{ background: "var(--green)" }}></span>
+                Gin (Go)
+              </td>
+              <td>Handler-Based + Middleware</td>
+              <td>gin.Context + interface DI</td>
+              <td>Interface-based (manual/wire)</td>
+              <td>testify + httptest + testcontainers-go</td>
+            </tr>
+            <tr>
+              <td>
+                <span className="cat-indicator" style={{ background: "var(--green)" }}></span>
+                Phoenix / Elixir
+              </td>
+              <td>MVC + LiveView + OTP</td>
+              <td>LiveView stateful WebSocket</td>
+              <td>OTP Application supervision</td>
+              <td>ExUnit + Phoenix.ConnTest</td>
+            </tr>
+            <tr>
+              <td>
+                <span className="cat-indicator" style={{ background: "var(--blue)" }}></span>
+                Astro
+              </td>
+              <td>Islands + Content Collections</td>
+              <td>Content Collections (Zod)</td>
+              <td>N/A (static/server)</td>
+              <td>Vitest + Playwright</td>
+            </tr>
+            <tr>
+              <td>
+                <span className="cat-indicator" style={{ background: "var(--purple)" }}></span>
+                Tauri
+              </td>
+              <td>Rust Core + Frontend Shell + IPC</td>
+              <td>tauri::State + Commands</td>
+              <td>tauri::Builder (Rust)</td>
+              <td>cargo test + Vitest + Playwright</td>
+            </tr>
+            <tr>
+              <td>
+                <span className="cat-indicator" style={{ background: "var(--blue)" }}></span>
+                htmx
+              </td>
+              <td>HATEOAS Hypermedia-Driven</td>
+              <td>Server state (no client state)</td>
+              <td>N/A (server-only state)</td>
+              <td>Backend tests (no JS testing)</td>
+            </tr>
+            <tr>
+              <td>
+                <span className="cat-indicator" style={{ background: "var(--blue)" }}></span>
+                Lit / Web Components
+              </td>
+              <td>ReactiveElement + Web Components</td>
+              <td>@property() + @state()</td>
+              <td>@consume/@provide context</td>
+              <td>@open-wc/testing + Web Test Runner</td>
+            </tr>
           </tbody>
         </table>
       </div>
