@@ -20,7 +20,7 @@ export default function FilterBar({ activeCat, searchQuery }: FilterBarProps) {
         href={getHref("all")}
         className={`filter-btn ${activeCat === "all" ? "active" : ""}`}
       >
-        All Frameworks
+        All
       </Link>
       <Link
         href={getHref("mobile")}
@@ -41,10 +41,22 @@ export default function FilterBar({ activeCat, searchQuery }: FilterBarProps) {
         Backend
       </Link>
       <Link
+        href={getHref("fullstack")}
+        className={`filter-btn ${activeCat === "fullstack" ? "active" : ""}`}
+      >
+        Fullstack
+      </Link>
+      <Link
         href={getHref("desktop")}
         className={`filter-btn ${activeCat === "desktop" ? "active" : ""}`}
       >
         Desktop
+      </Link>
+      <Link
+        href={getHref("ai")}
+        className={`filter-btn ${activeCat === "ai" ? "active" : ""}`}
+      >
+        AI Agent
       </Link>
     </div>
   );

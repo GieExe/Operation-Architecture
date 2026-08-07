@@ -7,14 +7,14 @@
     <img src="https://img.shields.io/badge/React-19.2.4-58c4dc?logo=react&labelColor=111" alt="React 19" />
     <img src="https://img.shields.io/badge/Tailwind-4-06B6D4?logo=tailwindcss&labelColor=111" alt="Tailwind CSS 4" />
     <img src="https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&labelColor=111" alt="TypeScript 5" />
-    <img src="https://img.shields.io/badge/23_Frameworks_Analyzed-e8a838?labelColor=111" alt="23 Frameworks" />
+    <img src="https://img.shields.io/badge/45_Frameworks_Analyzed-e8a838?labelColor=111" alt="45 Frameworks" />
   </p>
   <br />
 </div>
 
 ---
 
-**Architectura** is a production-grade master reference that catalogs the golden-standard architecture patterns, data flow mechanics, directory blueprints, and complementary tech stacks for **23 prominent programming frameworks** across **4 categories** — mobile, frontend, backend, and desktop.
+**Architectura** is a production-grade master reference that catalogs the golden-standard architecture patterns, data flow mechanics, directory blueprints, and complementary tech stacks for **45 prominent programming frameworks** across **6 categories** — mobile, frontend, backend, fullstack, desktop, and AI agent architectures.
 
 Every framework includes **two architecture tiers**:
 
@@ -25,7 +25,7 @@ Every framework includes **two architecture tiers**:
 
 ## 📋 Frameworks Analyzed
 
-### 📱 Mobile (6)
+### 📱 Mobile (6 + 1)
 | Framework | Architecture Badge |
 |---|---|
 | **React Native** | Feature-Based MVVM + UDF |
@@ -35,7 +35,7 @@ Every framework includes **two architecture tiers**:
 | **Ionic** | MVVM + Web Component Abstraction |
 | **.NET MAUI** | Blazor Hybrid / Clean MVVM |
 
-### 🎨 Frontend (7)
+### 🎨 Frontend (7 + 4)
 | Framework | Architecture Badge |
 |---|---|
 | **Next.js (React)** | RSC + Server-First + App Router |
@@ -46,7 +46,7 @@ Every framework includes **two architecture tiers**:
 | **SolidJS** | Signals + Fine-Grained Reactivity |
 | **Remix** | Nested Routes + Server-First + Progressive Enhancement |
 
-### ⚙️ Backend (8)
+### ⚙️ Backend (8 + 4)
 | Framework | Architecture Badge |
 |---|---|
 | **NestJS** | Modular + CQRS + Hexagonal |
@@ -58,7 +58,7 @@ Every framework includes **two architecture tiers**:
 | **Django** | MVT + App-Based + DRY |
 | **Laravel** | MVC + Service Layer + Action Pattern |
 
-### 🖥️ Desktop (2)
+### 🖥️ Desktop (2 + 2)
 | Framework | Architecture Badge |
 |---|---|
 | **.NET WPF** | MVVM + DI + Event-Based |
@@ -69,7 +69,7 @@ Every framework includes **two architecture tiers**:
 ## ✨ Features
 
 - **🔍 Search** — Filter frameworks by name with instant results via server-side query params
-- **🏷️ Category Filters** — Toggle between All, Mobile, Frontend, Backend, and Desktop views
+- **🏷️ Category Filters** — Toggle between All, Mobile, Frontend, Backend, Fullstack, Desktop, and AI Agent views
 - **🔄 Architecture Tiers** — Each framework card toggles between small-project and serious-project blueprints
 - **📐 Golden Standard Architecture** — Detailed breakdown of each framework's recommended architecture pattern
 - **📊 Data & State Flow** — How data moves through the system (unidirectional, streams, signals, etc.)
@@ -101,6 +101,7 @@ Open [http://localhost:3000](http://localhost:3000) in your browser to explore t
 | `npm run build` | Production build |
 | `npm run start` | Start production server |
 | `npm run lint` | Run ESLint |
+| `npm run typecheck` | Run TypeScript type checking |
 
 ---
 

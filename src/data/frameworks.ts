@@ -2116,525 +2116,671 @@ export const frameworks: Framework[] = [
     ]
   },
   {
-    "id": "fastapi",
-    "cat": "backend",
-    "name": "FastAPI",
-    "icon": "FA",
-    "archBadge": "Dependency Injection + Service Layer",
+    "id": "sveltekit-express",
+    "cat": "fullstack",
+    "name": "SvelteKit + Express",
+    "icon": "SE",
+    "archBadge": "SSR Gateway + 3-Tier API Backend",
     "blocks": [
       {
-        "title": "Small Project Architecture",
+        "title": "Architecture Overview",
         "svgIcon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5\"/></svg>",
-        "contentHtml": "<p><strong>Flat routers + Pydantic models in a single main.py.</strong> Use FastAPI's automatic OpenAPI docs, Pydantic v2 for validation, and SQLAlchemy async for database access. Routers grouped by resource. No separate service layer — business logic in route handlers. Simple, direct, with automatic validation.</p>",
-        "fullWidth": false,
-        "tier": "small"
-      },
-      {
-        "title": "Small Project Directory Structure",
-        "svgIcon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z\"/></svg>",
-        "contentHtml": "<div class=\"fw-tree\">\n<span class=\"dir\">app/</span>\n├── main.py                <span class=\"comment\"># FastAPI app + lifespan</span>\n├── <span class=\"dir\">routers/</span>\n│   ├── auth.py            <span class=\"comment\"># Auth routes</span>\n│   ├── users.py\n│   └── items.py\n├── <span class=\"dir\">models/</span>             <span class=\"comment\"># SQLAlchemy ORM models</span>\n├── <span class=\"dir\">schemas/</span>            <span class=\"comment\"># Pydantic v2 models</span>\n├── <span class=\"dir\">database.py</span>          <span class=\"comment\"># Engine + session factory</span>\n└── <span class=\"dir\">dependencies.py</span>      <span class=\"comment\"># Depends() helpers</span>\n</div>",
-        "fullWidth": true,
-        "tier": "small"
-      },
-      {
-        "title": "Golden Standard Architecture",
-        "svgIcon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5\"/></svg>",
-        "contentHtml": "<p><strong>Dependency Injection with Service Layer and Repository Pattern.</strong> FastAPI's <code>Depends()</code> system provides a built-in DI container. Controllers (routers) depend on Service abstractions, which depend on Repository abstractions. Repositories implement data access via SQLAlchemy async. Pydantic v2 models define request/response contracts and domain entities. Background tasks and Celery/RQ for async processing.</p>",
+        "contentHtml": "<p><strong>SvelteKit SSR Gateway + Express 3-Tier API Backend.</strong> SvelteKit handles the frontend — SSR, file-based routing, form actions, and progressive enhancement. Express serves as a dedicated API backend — JSON REST endpoints with service/repository layers. SvelteKit hooks proxy authenticated requests to Express. This separation gives you SvelteKit's excellent DX for UI + Express's mature ecosystem for complex backend logic. The key insight: SvelteKit's <code>+server.ts</code> files serve as an API gateway, not the API itself.</p>",
         "fullWidth": false,
         "tier": "serious"
       },
       {
-        "title": "Data & State Flow",
+        "title": "Data & Request Flow",
         "svgIcon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><polyline points=\"22 12 18 12 15 21 9 3 6 12 2 12\"/></svg>",
-        "contentHtml": "<ul><li><strong>HTTP Request → Router → Depends() chain resolution → Service → Repository → DB</strong> — linear, synchronous-resolving DI pipeline</li><li><strong>Pydantic v2</strong> — automatic request body validation at the type level; <code>model_dump()</code> for serialization</li><li><strong>SQLAlchemy async (v2.0+)</strong> — <code>async with AsyncSession()</code> for non-blocking database access</li><li><strong>BackgroundTasks</strong> — <code>BackgroundTasks.add_task()</code> for post-response work; Celery/RQ for heavier async</li><li><strong>Middleware stack</strong> — CORS, auth, rate limiting, logging via Starlette middleware</li><li><strong>OpenAPI + Swagger UI</strong> — auto-generated documentation from Pydantic models and route signatures</li></ul>",
+        "contentHtml": "<ul><li><strong>Browser → SvelteKit SSR → Express API → DB</strong> — server-side rendering fetches from Express, caches response, renders HTML</li><li><strong>Browser → SvelteKit Form Action → Express API → DB</strong> — mutations go through SvelteKit's actions which call Express endpoints</li><li><strong>Browser → Express API (direct)</strong> — client-side fetch for real-time updates, WebSocket connections, file uploads — calls Express directly via CORS or same-origin proxy</li><li><strong>SvelteKit hooks.server.ts</strong> — session validation, JWT refresh, auth token attachment to upstream Express requests — single auth middleware</li><li><strong>SvelteKit +server.ts route handlers</strong> — API proxy routes that forward to Express with auth headers attached, or implement simple endpoints directly</li><li><strong>SvelteKit $state runes</strong> — client-side reactive state for UI interactivity; server state lives in Express + DB</li></ul>",
         "fullWidth": false,
         "tier": "serious"
       },
       {
-        "title": "Directory Structure Blueprint",
+        "title": "Monorepo Directory Structure",
         "svgIcon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z\"/></svg>",
-        "contentHtml": "<div class=\"fw-tree\">\n    <span class=\"dir\">app/</span>\n    ├── main.py                       <span class=\"comment\"># FastAPI instance + router includes + lifespan</span>\n    ├── <span class=\"dir\">core/</span>\n    │   ├── config.py                 <span class=\"comment\"># pydantic-settings BaseSettings</span>\n    │   ├── database.py               <span class=\"comment\"># AsyncEngine + sessionmaker</span>\n    │   ├── security.py               <span class=\"comment\"># JWT, password hashing</span>\n    │   └── <span class=\"dir\">dependencies/</span>\n    │       ├── auth.py               <span class=\"comment\"># get_current_user dependency</span>\n    │       └── database.py           <span class=\"comment\"># get_db session dependency</span>\n    ├── <span class=\"dir\">features/</span>\n    │   ├── <span class=\"dir\">auth/</span>\n    │   │   ├── router.py             <span class=\"comment\"># @router.post('/login'), etc.</span>\n    │   │   ├── service.py            <span class=\"comment\"># AuthService class</span>\n    │   │   ├── repository.py         <span class=\"comment\"># AuthRepository with DB logic</span>\n    │   │   └── schemas.py            <span class=\"comment\"># LoginRequest, TokenResponse</span>\n    │   ├── <span class=\"dir\">users/</span>\n    │   │   ├── router.py\n    │   │   ├── service.py\n    │   │   ├── repository.py\n    │   │   └── schemas.py\n    │   └── <span class=\"dir\">orders/</span>\n    ├── <span class=\"dir\">models/</span>                       <span class=\"comment\"># SQLAlchemy ORM Base + model classes</span>\n    │   ├── base.py\n    │   ├── user.py\n    │   └── order.py\n    ├── <span class=\"dir\">middleware/</span>\n    │   ├── cors.py\n    │   └── error_handler.py\n    ├── <span class=\"dir\">tasks/</span>                        <span class=\"comment\"># Celery/RQ background tasks</span>\n    ├── <span class=\"dir\">tests/</span>\n    │   ├── <span class=\"dir\">unit/</span>\n    │   └── <span class=\"dir\">integration/</span>\n    └── alembic.ini + <span class=\"dir\">alembic/</span>           <span class=\"comment\"># Database migrations</span>\n</div>",
+        "contentHtml": "<div class=\"fw-tree\">\n    <span class=\"dir\">apps/</span>frontend/                     <span class=\"comment\"># SvelteKit</span>\n    ├── <span class=\"dir\">src/</span>\n    │   ├── app.html\n    │   ├── hooks.server.ts           <span class=\"comment\"># Auth, proxy to Express</span>\n    │   ├── <span class=\"dir\">routes/</span>\n    │   │   ├── +layout.svelte\n    │   │   ├── +page.svelte          <span class=\"comment\"># SSR renders with Express data</span>\n    │   │   ├── +page.server.ts       <span class=\"comment\"># Load: fetch Express API</span>\n    │   │   ├── <span class=\"dir\">auth/</span>\n    │   │   ├── <span class=\"dir\">dashboard/</span>\n    │   │   └── <span class=\"dir\">api/</span>                <span class=\"comment\"># Proxy routes → Express</span>\n    │   │       └── [...path]/+server.ts\n    │   ├── <span class=\"dir\">lib/</span>\n    │   │   ├── <span class=\"dir\">api/</span>\n    │   │   │   └── client.ts        <span class=\"comment\"># Express HTTP client</span>\n    │   │   ├── <span class=\"dir\">components/</span>\n    │   │   └── <span class=\"dir\">stores/</span>\n    │   └── <span class=\"dir\">lib/server/</span>             <span class=\"comment\"># Auth, session</span>\n    ├── svelte.config.js\n    ├── vite.config.ts\n    └── package.json\n    <span class=\"dir\">apps/</span>backend/                      <span class=\"comment\"># Express</span>\n    ├── <span class=\"dir\">src/</span>\n    │   ├── index.ts                  <span class=\"comment\"># Express app + listen</span>\n    │   ├── app.ts                    <span class=\"comment\"># Middleware, routes</span>\n    │   ├── <span class=\"dir\">routes/</span>\n    │   │   ├── auth.routes.ts\n    │   │   ├── users.routes.ts\n    │   │   └── index.ts\n    │   ├── <span class=\"dir\">controllers/</span>\n    │   ├── <span class=\"dir\">services/</span>\n    │   ├── <span class=\"dir\">repositories/</span>\n    │   ├── <span class=\"dir\">middleware/</span>\n    │   ├── <span class=\"dir\">validators/</span>              <span class=\"comment\"># Zod schemas</span>\n    │   └── <span class=\"dir\">config/</span>\n    ├── tsconfig.json\n    └── package.json\n    <span class=\"dir\">packages/</span>shared/                    <span class=\"comment\"># Shared types</span>\n    ├── <span class=\"dir\">src/</span>\n    │   ├── types.ts                  <span class=\"comment\"># DTOs, API contracts</span>\n    │   └── index.ts\n    └── package.json\n    turbo.json\n    package.json                       <span class=\"comment\"># Workspace root</span>\n</div>",
         "fullWidth": true,
         "tier": "serious"
       },
       {
-        "title": "When Not To Use FastAPI",
+        "title": "Small Project (Single Repo)",
+        "svgIcon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5\"/></svg>",
+        "contentHtml": "<p><strong>For smaller projects, co-locate Express inside SvelteKit.</strong> Use SvelteKit's <code>+server.ts</code> for simple endpoints and mount Express on a custom server for complex routes. Alternatively, use <code>hooks.server.ts</code> to directly call service functions (skip Express entirely for prototyping).</p>",
+        "fullWidth": false,
+        "tier": "small"
+      },
+      {
+        "title": "Small Project Structure",
+        "svgIcon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z\"/></svg>",
+        "contentHtml": "<div class=\"fw-tree\">\n    <span class=\"dir\">src/</span>\n    ├── app.html\n    ├── hooks.server.ts               <span class=\"comment\"># Auth + DB client</span>\n    ├── <span class=\"dir\">routes/</span>\n    │   ├── +layout.svelte\n    │   ├── +page.svelte\n    │   ├── +page.server.ts           <span class=\"comment\"># DB queries directly</span>\n    │   └── <span class=\"dir\">api/</span>\n    │       ├── <span class=\"dir\">auth/</span>\n    │       │   └── login/+server.ts\n    │       └── <span class=\"dir\">webhooks/</span>\n    │           └── stripe/+server.ts\n    ├── <span class=\"dir\">lib/</span>\n    │   ├── <span class=\"dir\">components/</span>\n    │   └── <span class=\"dir\">stores/</span>\n    ├── <span class=\"dir\">lib/server/</span>\n    │   ├── db.ts                     <span class=\"comment\"># Drizzle/Prisma</span>\n    │   ├── auth.ts\n    │   └── services/                 <span class=\"comment\"># Business logic (optional)</span>\n    └── app.d.ts\n</div>",
+        "fullWidth": true,
+        "tier": "small"
+      },
+      {
+        "title": "Why This Combination Works",
+        "svgIcon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z\"/></svg>",
+        "contentHtml": "<p>SvelteKit's compile-time approach means zero runtime overhead on the frontend — components compile to vanilla JS DOM ops. Express's unopinionated nature means the backend can evolve from simple route handlers to full 3-tier service layers without rewriting. The separation is clean: SvelteKit owns the UI rendering + auth gateway; Express owns business logic, data access, and third-party integrations. Turborepo/Nx monorepo with shared types package ensures end-to-end type safety. This is the ideal stack for teams that want Svelte's frontend simplicity but need Express's backend maturity and ecosystem.</p>",
+        "fullWidth": false,
+        "tier": "serious"
+      },
+      {
+        "title": "When Not To Use This Stack",
         "svgIcon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z\"/></svg>",
-        "contentHtml": "<p><strong>Don't use FastAPI when:</strong> Need real-time features (WebSockets, server-sent events at scale) — Django Channels or Phoenix is better. Building a CMS with admin panel — Django has built-in admin. Team has zero Python async experience — async/await is mandatory in FastAPI. Need full-stack framework — FastAPI is HTTP-only; use Django or Rails for batteries-included.</p>",
+        "contentHtml": "<p><strong>Don't use SvelteKit + Express when:</strong> App is a simple CRUD with no complex business logic — SvelteKit alone with Drizzle is sufficient. Team is small and wants a single framework — Next.js full-stack or Remix is more cohesive. You need real-time features at scale — consider adding Socket.IO or switching to Elixir/Phoenix. Backend is purely serverless functions — Express adds unnecessary server management.</p>",
         "fullWidth": false,
         "tier": "serious"
       },
       {
         "title": "Complementary Stack",
         "svgIcon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><rect x=\"2\" y=\"3\" width=\"20\" height=\"14\" rx=\"2\" /><line x1=\"8\" y1=\"21\" x2=\"16\" y2=\"21\" /><line x1=\"12\" y1=\"17\" x2=\"12\" y2=\"21\" /></svg>",
-        "contentHtml": "<table class=\"fw-table\"><tr><th>Concern</th><th>Library</th></tr><tr><td>Validation</td><td>Pydantic v2</td></tr><tr><td>ORM</td><td>SQLAlchemy 2.0 (async)</td></tr><tr><td>Migrations</td><td>Alembic</td></tr><tr><td>Auth</td><td>python-jose + passlib[bcrypt]</td></tr><tr><td>Background Tasks</td><td>Celery / RQ</td></tr><tr><td>Caching</td><td>Redis + fastapi-cache2</td></tr><tr><td>Testing</td><td>pytest + httpx + testcontainers</td></tr><tr><td>API Docs</td><td>OpenAPI + Swagger UI (built-in)</td></tr></table>",
+        "contentHtml": "<table class=\"fw-table\"><tr><th>Concern</th><th>Library</th></tr><tr><td>Monorepo</td><td>Turborepo / Nx</td></tr><tr><td>Frontend</td><td>SvelteKit (SSR + Svelte 5 Runes)</td></tr><tr><td>Backend</td><td>Express / Fastify</td></tr><tr><td>Validation</td><td>Zod (shared between frontend & backend)</td></tr><tr><td>ORM</td><td>Drizzle ORM / Prisma</td></tr><tr><td>Auth</td><td>Lucia Auth / Passport.js</td></tr><tr><td>API Client</td><td>openapi-fetch (typed HTTP client)</td></tr><tr><td>Logging</td><td>Pino</td></tr><tr><td>Testing</td><td>Vitest + Playwright (E2E)</td></tr><tr><td>Deploy</td><td>Docker Compose / Railway / Fly.io</td></tr></table>",
         "fullWidth": false,
         "tier": "all"
       }
     ]
   },
   {
-    "id": "hono",
-    "cat": "backend",
-    "name": "Hono",
-    "icon": "HN",
-    "archBadge": "Edge-First Middleware Chain + RPC",
+    "id": "ai-agent-stack",
+    "cat": "ai",
+    "name": "AI Agent Architecture",
+    "icon": "AI",
+    "archBadge": "Tool-Augmented LLM + RAG + Multi-Agent Orchestration",
     "blocks": [
-      {
-        "title": "Small Project Architecture",
-        "svgIcon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5\"/></svg>",
-        "contentHtml": "<p><strong>Single file Hono app with route handlers and middleware.</strong> Use Hono's minimal route syntax with Zod validation middleware. Deploy to Cloudflare Workers, Bun, or Node.js with zero config changes. No DI container — functions import db/helpers directly. RPC client auto-generated from route types.</p>",
-        "fullWidth": false,
-        "tier": "small"
-      },
-      {
-        "title": "Small Project Directory Structure",
-        "svgIcon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z\"/></svg>",
-        "contentHtml": "<div class=\"fw-tree\">\n<span class=\"dir\">src/</span>\n├── index.ts               <span class=\"comment\"># Hono app + routes</span>\n├── <span class=\"dir\">routes/</span>\n│   ├── auth.ts            <span class=\"comment\"># /api/auth/*</span>\n│   ├── posts.ts\n│   └── users.ts\n├── <span class=\"dir\">db/</span>\n│   ├── schema.ts          <span class=\"comment\"># Drizzle ORM schema</span>\n│   └── index.ts           <span class=\"comment\"># DB client</span>\n├── <span class=\"dir\">middleware/</span>          <span class=\"comment\"># Auth, CORS, rate limit</span>\n└── wrangler.toml\n</div>",
-        "fullWidth": true,
-        "tier": "small"
-      },
       {
         "title": "Golden Standard Architecture",
         "svgIcon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5\"/></svg>",
-        "contentHtml": "<p><strong>Edge-First Middleware Chain with End-to-End Type-Safe RPC.</strong> Hono runs on multiple runtimes (Cloudflare Workers, Bun, Deno, Node.js) with the same API. Middleware is composed in a chain — each middleware transforms context (<code>c.env</code>, <code>c.var</code>). The Hono RPC client automatically generates typed fetch clients from route definitions, eliminating the need for manual API client generation.</p>",
+        "contentHtml": "<p><strong>Tool-Augmented LLM with RAG and Multi-Agent Orchestration.</strong> The core architecture pattern for production AI agents: an LLM (GPT-4o, Claude, or open-source) is augmented with a <strong>tool registry</strong> — functions the LLM can call (search, database query, API calls, code execution). <strong>RAG</strong> (Retrieval-Augmented Generation) grounds responses in your data via vector search. For complex tasks, a <strong>multi-agent orchestrator</strong> decomposes work across specialized sub-agents, each with their own tools and context window. This is not a single framework — it's the architectural pattern that LangChain, CrewAI, AutoGen, and Semantic Kernel all implement.</p>",
         "fullWidth": false,
         "tier": "serious"
       },
       {
-        "title": "Data & State Flow",
+        "title": "Data & Agent Flow",
         "svgIcon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><polyline points=\"22 12 18 12 15 21 9 3 6 12 2 12\"/></svg>",
-        "contentHtml": "<ul><li><strong>HTTP Request → Middleware Chain → Route Handler → Response</strong> — Context (<code>c</code>) flows through the chain, accumulating env vars, headers, cookies</li><li><strong>Zod middleware</strong> — <code>zValidator('json', schema)</code> validates request body; types flow automatically</li><li><strong>Hono RPC</strong> — <code>const client = hc&lt;AppType&gt;('/api')</code> generates a fully typed fetch client with autocomplete on routes, params, query, and response</li><li><strong>Bindings</strong> — <code>c.env.DB</code> (D1), <code>c.env.KV</code> (KV) typed via Cloudflare Workers types</li><li><strong>Isomorphic</strong> — same code deploys to Cloudflare Workers, Bun, Deno, Node.js, and AWS Lambda</li></ul>",
+        "contentHtml": "<ul><li><strong>User Query → Orchestrator Agent → Task Decomposition → Sub-Agents → Tool Execution → Response Synthesis</strong></li><li><strong>RAG Pipeline:</strong> Document → Chunking → Embedding (text-embedding-3-small) → Vector Store (pgvector/Pinecone) → Similarity Search → Context Injection → LLM Generation</li><li><strong>Tool Registry Pattern:</strong> Each tool is a typed function (input schema via Zod/Pydantic, output schema) registered with the agent. The LLM decides which tools to call and in what order.</li><li><strong>Memory Architecture:</strong> Short-term (conversation buffer in context window) + Long-term (vector store + summary compression) + Working memory (scratchpad for multi-step reasoning)</li><li><strong>Guardrails Layer:</strong> Input validation → Prompt injection detection → Output validation → PII redaction — every I/O boundary</li><li><strong>Observability:</strong> Trace every LLM call, tool invocation, and agent decision. LangSmith / LangFuse / OpenTelemetry for production monitoring.</li></ul>",
         "fullWidth": false,
         "tier": "serious"
       },
       {
         "title": "Directory Structure Blueprint",
         "svgIcon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z\"/></svg>",
-        "contentHtml": "<div class=\"fw-tree\">\n    <span class=\"dir\">src/</span>\n    ├── index.ts                      <span class=\"comment\"># Hono app factory + route mounting</span>\n    ├── <span class=\"dir\">app/</span>\n    │   ├── route.ts                  <span class=\"comment\"># Base Hono instance with middleware</span>\n    │   └── rpc.ts                    <span class=\"comment\"># Exported AppType for RPC client</span>\n    ├── <span class=\"dir\">features/</span>\n    │   ├── <span class=\"dir\">auth/</span>\n    │   │   ├── auth.routes.ts        <span class=\"comment\"># /api/auth/login, /api/auth/me</span>\n    │   │   ├── auth.handlers.ts      <span class=\"comment\"># Handler functions</span>\n    │   │   ├── auth.schemas.ts       <span class=\"comment\"># Zod schemas</span>\n    │   │   └── auth.service.ts       <span class=\"comment\"># Business logic</span>\n    │   ├── <span class=\"dir\">posts/</span>\n    │   │   ├── posts.routes.ts\n    │   │   ├── posts.handlers.ts\n    │   │   ├── posts.schemas.ts\n    │   │   └── posts.service.ts\n    │   └── <span class=\"dir\">users/</span>\n    ├── <span class=\"dir\">db/</span>\n    │   ├── index.ts                  <span class=\"comment\"># drizzle() client</span>\n    │   ├── schema.ts                 <span class=\"comment\"># Drizzle ORM schema</span>\n    │   └── <span class=\"dir\">migrations/</span>\n    ├── <span class=\"dir\">middleware/</span>\n    │   ├── auth.ts                   <span class=\"comment\"># JWT validation middleware</span>\n    │   ├── cors.ts\n    │   ├── rate-limit.ts\n    │   └── logger.ts\n    ├── <span class=\"dir\">lib/</span>\n    │   ├── jwt.ts                    <span class=\"comment\"># JWT sign/verify helpers</span>\n    │   └── hash.ts                   <span class=\"comment\"># Password hashing</span>\n    └── wrangler.toml                 <span class=\"comment\"># Cloudflare Workers config</span>\n</div>",
+        "contentHtml": "<div class=\"fw-tree\">\n    <span class=\"dir\">src/</span>\n    ├── index.ts                      <span class=\"comment\"># Agent runtime entry</span>\n    ├── <span class=\"dir\">agents/</span>                       <span class=\"comment\"># Agent definitions</span>\n    │   ├── <span class=\"dir\">orchestrator/</span>\n    │   │   ├── orchestrator.agent.ts  <span class=\"comment\"># Task decomposition + routing</span>\n    │   │   └── prompts.ts            <span class=\"comment\"># System prompts</span>\n    │   ├── <span class=\"dir\">researcher/</span>\n    │   │   ├── researcher.agent.ts    <span class=\"comment\"># Web search + synthesis</span>\n    │   │   └── tools.ts              <span class=\"comment\"># Search tools</span>\n    │   ├── <span class=\"dir\">coder/</span>\n    │   │   ├── coder.agent.ts         <span class=\"comment\"># Code generation + review</span>\n    │   │   └── tools.ts              <span class=\"comment\"># File ops, linter, executor</span>\n    │   └── <span class=\"dir\">analyst/</span>\n    │       ├── analyst.agent.ts       <span class=\"comment\"># Data analysis + SQL</span>\n    │       └── tools.ts\n    ├── <span class=\"dir\">tools/</span>                         <span class=\"comment\"># Shared tool registry</span>\n    │   ├── registry.ts               <span class=\"comment\"># Tool registration + schema validation</span>\n    │   ├── <span class=\"dir\">search/</span>\n    │   │   ├── web-search.tool.ts\n    │   │   └── vector-search.tool.ts\n    │   ├── <span class=\"dir\">database/</span>\n    │   │   └── sql-query.tool.ts\n    │   └── <span class=\"dir\">api/</span>\n    │       └── http-client.tool.ts\n    ├── <span class=\"dir\">rag/</span>                           <span class=\"comment\"># Retrieval-Augmented Generation</span>\n    │   ├── <span class=\"dir\">pipeline/</span>\n    │   │   ├── chunker.ts            <span class=\"comment\"># Document splitting</span>\n    │   │   ├── embedder.ts           <span class=\"comment\"># Embedding generation</span>\n    │   │   ├── retriever.ts          <span class=\"comment\"># Vector similarity search</span>\n    │   │   └── reranker.ts           <span class=\"comment\"># Result re-ranking</span>\n    │   ├── <span class=\"dir\">stores/</span>\n    │   │   ├── vector-store.ts       <span class=\"comment\"># pgvector / Pinecone adapter</span>\n    │   │   └── doc-store.ts          <span class=\"comment\"># Document metadata store</span>\n    │   └── <span class=\"dir\">loaders/</span>\n    │       ├── pdf.loader.ts\n    │       ├── web.loader.ts\n    │       └── code.loader.ts\n    ├── <span class=\"dir\">memory/</span>                        <span class=\"comment\"># Agent memory systems</span>\n    │   ├── conversation-memory.ts    <span class=\"comment\"># Sliding window buffer</span>\n    │   ├── long-term-memory.ts       <span class=\"comment\"># Vector-based recall</span>\n    │   └── working-memory.ts         <span class=\"comment\"># Scratchpad for reasoning</span>\n    ├── <span class=\"dir\">guardrails/</span>\n    │   ├── input-guard.ts            <span class=\"comment\"># Prompt injection detection</span>\n    │   ├── output-guard.ts           <span class=\"comment\"># Response validation</span>\n    │   └── pii-redactor.ts           <span class=\"comment\"># PII scrubbing</span>\n    ├── <span class=\"dir\">observability/</span>\n    │   ├── tracer.ts                 <span class=\"comment\"># OpenTelemetry spans</span>\n    │   ├── logger.ts\n    │   └── metrics.ts\n    ├── <span class=\"dir\">llm/</span>\n    │   ├── provider.ts               <span class=\"comment\"># OpenAI / Anthropic / Ollama adapter</span>\n    │   ├── router.ts                 <span class=\"comment\"># Model routing (cost/quality)</span>\n    │   └── cache.ts                 <span class=\"comment\"># Response caching (Redis/semantic)</span>\n    └── <span class=\"dir\">config/</span>\n        └── index.ts                  <span class=\"comment\"># Env, model configs, tool settings</span>\n</div>",
         "fullWidth": true,
         "tier": "serious"
       },
       {
-        "title": "When Not To Use Hono",
+        "title": "Small Project (Single Agent)",
+        "svgIcon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5\"/></svg>",
+        "contentHtml": "<p><strong>Single agent + tool functions in one file.</strong> For prototypes: define one agent with a system prompt, a few tool functions, and an LLM call loop. No multi-agent orchestration, no RAG pipeline — just prompt → tool calls → response. Use LangChain or the OpenAI SDK directly. A single <code>agent.ts</code> file with tools co-located.</p>",
+        "fullWidth": false,
+        "tier": "small"
+      },
+      {
+        "title": "Small Project Structure",
+        "svgIcon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z\"/></svg>",
+        "contentHtml": "<div class=\"fw-tree\">\n    <span class=\"dir\">src/</span>\n    ├── index.ts                      <span class=\"comment\"># CLI / HTTP endpoint</span>\n    ├── agent.ts                      <span class=\"comment\"># Agent loop + system prompt</span>\n    ├── <span class=\"dir\">tools/</span>\n    │   ├── search.ts\n    │   ├── database.ts\n    │   └── index.ts                  <span class=\"comment\"># Tool registry</span>\n    ├── llm.ts                        <span class=\"comment\"># OpenAI client wrapper</span>\n    └── <span class=\"dir\">prompts/</span>\n        └── system.md                 <span class=\"comment\"># System prompt template</span>\n</div>",
+        "fullWidth": true,
+        "tier": "small"
+      },
+      {
+        "title": "Why This Architecture Wins",
+        "svgIcon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z\"/></svg>",
+        "contentHtml": "<p>The Tool-Augmented LLM pattern is the only architecture proven to work at scale for AI agents. Tool calling gives the LLM agency beyond text generation. RAG solves the hallucination problem by grounding responses in real data. Multi-agent orchestration handles tasks too complex for a single context window. This pattern separates concerns cleanly: LLM provider (pluggable), tool registry (typed), memory (hierarchical), guardrails (every boundary), and observability (every decision traced). The architecture is framework-agnostic — implement it with LangChain, CrewAI, or pure OpenAI SDK. The structure is what matters.</p>",
+        "fullWidth": false,
+        "tier": "serious"
+      },
+      {
+        "title": "When Not To Use This Stack",
         "svgIcon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z\"/></svg>",
-        "contentHtml": "<p><strong>Don't use Hono when:</strong> Need built-in ORM/admin panel/background jobs — Hono is a routing layer, not a full framework. Building a large monolith with many integrated concerns — NestJS or Spring Boot has more structure. Need WebSocket-heavy real-time features — Hono's WS support is basic. Team expects Rails/Django-level conventions — Hono is intentionally minimal.</p>",
+        "contentHtml": "<p><strong>Don't use this architecture when:</strong> Task is simple enough for a single LLM call — no agent loop needed. You don't need tool calling — just use the OpenAI chat API directly. Latency is critical and you can't tolerate multi-step reasoning. You're building a chatbot, not an agent — RAG alone may suffice. Budget is extremely constrained — each agent step costs LLM tokens.</p>",
         "fullWidth": false,
         "tier": "serious"
       },
       {
         "title": "Complementary Stack",
         "svgIcon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><rect x=\"2\" y=\"3\" width=\"20\" height=\"14\" rx=\"2\" /><line x1=\"8\" y1=\"21\" x2=\"16\" y2=\"21\" /><line x1=\"12\" y1=\"17\" x2=\"12\" y2=\"21\" /></svg>",
-        "contentHtml": "<table class=\"fw-table\"><tr><th>Concern</th><th>Library</th></tr><tr><td>Runtime</td><td>Cloudflare Workers / Bun / Node.js</td></tr><tr><td>Validation</td><td>Zod (via @hono/zod-validator)</td></tr><tr><td>ORM</td><td>Drizzle ORM</td></tr><tr><td>Database</td><td>Cloudflare D1 / Turso / PlanetScale</td></tr><tr><td>Auth</td><td>Better Auth / Lucia v3</td></tr><tr><td>RPC Client</td><td>hc (Hono Client, built-in)</td></tr><tr><td>Testing</td><td>Vitest + @hono/vite-ssg</td></tr><tr><td>OpenAPI</td><td>@hono/zod-openapi</td></tr></table>",
+        "contentHtml": "<table class=\"fw-table\"><tr><th>Concern</th><th>Library</th></tr><tr><td>Agent Framework</td><td>LangChain / CrewAI / AutoGen / OpenAI SDK</td></tr><tr><td>LLM Provider</td><td>OpenAI GPT-4o / Anthropic Claude / Ollama (local)</td></tr><tr><td>Vector Store</td><td>pgvector (PostgreSQL) / Pinecone / Chroma</td></tr><tr><td>Embeddings</td><td>text-embedding-3-small / Cohere Embed</td></tr><tr><td>Tool Validation</td><td>Zod / Pydantic (typed tool schemas)</td></tr><tr><td>Memory</td><td>Redis (short-term) + pgvector (long-term)</td></tr><tr><td>Observability</td><td>LangSmith / LangFuse / OpenTelemetry</td></tr><tr><td>Guardrails</td><td>Guardrails AI / Custom input/output validation</td></tr><tr><td>Deploy</td><td>FastAPI + Celery / Temporal for durable execution</td></tr></table>",
         "fullWidth": false,
         "tier": "all"
       }
     ]
   },
   {
-    "id": "elysia",
-    "cat": "backend",
-    "name": "Bun / Elysia",
-    "icon": "EL",
-    "archBadge": "Decorator-Driven + End-to-End Type Safety",
+    "id": "vector-db",
+    "cat": "ai",
+    "name": "AI Data Layer (Vector DBs)",
+    "icon": "VD",
+    "archBadge": "Hybrid Search: Vector + Keyword + Graph",
     "blocks": [
-      {
-        "title": "Small Project Architecture",
-        "svgIcon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5\"/></svg>",
-        "contentHtml": "<p><strong>Single file Elysia app with inline handlers and guards.</strong> Use Elysia's decorator pattern with <code>.get('/path', handler)</code> chaining. Zod validation via <code>t.Object()</code> built-in. Bun's native SQLite for data. No DI container — handlers import directly. Eden Treaty provides end-to-end type safety from server to client.</p>",
-        "fullWidth": false,
-        "tier": "small"
-      },
-      {
-        "title": "Small Project Directory Structure",
-        "svgIcon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z\"/></svg>",
-        "contentHtml": "<div class=\"fw-tree\">\n<span class=\"dir\">src/</span>\n├── index.ts               <span class=\"comment\"># Elysia app + listen</span>\n├── <span class=\"dir\">routes/</span>\n│   ├── auth.ts\n│   ├── posts.ts\n│   └── users.ts\n├── <span class=\"dir\">db/</span>\n│   ├── schema.ts          <span class=\"comment\"># Drizzle schema</span>\n│   └── index.ts\n├── <span class=\"dir\">plugins/</span>             <span class=\"comment\"># Reusable Elysia plugins</span>\n└── <span class=\"dir\">eden.ts</span>               <span class=\"comment\"># Exported App type</span>\n</div>",
-        "fullWidth": true,
-        "tier": "small"
-      },
       {
         "title": "Golden Standard Architecture",
         "svgIcon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5\"/></svg>",
-        "contentHtml": "<p><strong>Decorator-Driven Plugin Architecture with End-to-End Type Safety.</strong> Elysia uses method chaining for route definition, guards, and resolution. Plugins encapsulate reusable middleware, schemas, and routes. Eden Treaty generates a fully typed fetch client from the server type — frontend gets autocomplete on all routes, params, and response shapes. Bun's runtime provides built-in SQLite, bundler, test runner, and package manager.</p>",
+        "contentHtml": "<p><strong>Hybrid Search Architecture: Vector Similarity + Full-Text + Knowledge Graph.</strong> Production AI agents need a multi-modal data strategy. <strong>Vector search</strong> (pgvector, Pinecone) for semantic similarity — find documents by meaning, not keywords. <strong>Full-text search</strong> (PostgreSQL tsvector, Elasticsearch) for exact matches and keyword queries. <strong>Knowledge graphs</strong> (Neo4j, Apache AGE) for structured entity relationships. The most battle-tested approach: PostgreSQL with pgvector extension handles both relational data and vector search in one database — no separate vector service needed for most workloads.</p>",
         "fullWidth": false,
         "tier": "serious"
       },
       {
-        "title": "Data & State Flow",
+        "title": "Data Flow Architecture",
         "svgIcon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><polyline points=\"22 12 18 12 15 21 9 3 6 12 2 12\"/></svg>",
-        "contentHtml": "<ul><li><strong>Lifecycle hooks</strong> — <code>onParse</code>, <code>onTransform</code>, <code>onBeforeHandle</code>, <code>onAfterHandle</code>, <code>onError</code> — full request lifecycle control</li><li><strong>Guard</strong> — conditional middleware that only applies to specific routes; can inject values into context</li><li><strong>Decorate</strong> — <code>.decorate('db', db)</code> adds typed properties to context accessible in all handlers</li><li><strong>Eden Treaty</strong> — <code>treaty&lt;App&gt;(fetch('/api'))</code> generates a typed client; no code generation needed</li><li><strong>Schema-first</strong> — <code>.post('/users', ({ body }) => {}, { body: t.Object({...}) })</code> — validation and types in one place</li><li><strong>Bun native</strong> — built-in bundler, test runner, SQLite, S3 client, HTML imports — no tooling setup needed</li></ul>",
+        "contentHtml": "<ul><li><strong>Ingestion Pipeline:</strong> Raw docs → Chunker (semantic/sliding window) → Embedder (OpenAI/Cohere) → Vector Store (pgvector) → Metadata Store (PostgreSQL JSONB) — all in one DB transaction</li><li><strong>Query Pipeline (Hybrid):</strong> User query → Embed → Vector search (cosine similarity, top-k) + Full-text search (BM25) → Reciprocal Rank Fusion (RRF) → Reranker (Cohere/Cross-encoder) → Top-N results → Inject into LLM context</li><li><strong>PostgreSQL + pgvector</strong> — same DB for relational data AND vectors; <code>SELECT * FROM docs ORDER BY embedding <=> query_embedding LIMIT 10</code> runs in the same transaction as your app data</li><li><strong>Pinecone/Weaviate</strong> — dedicated vector DBs for scale (100M+ vectors); managed, high-throughput, with built-in metadata filtering</li><li><strong>Graph Layer (Neo4j)</strong> — entity extraction → relationship mapping → knowledge graph; LLM queries graph for multi-hop reasoning</li></ul>",
         "fullWidth": false,
         "tier": "serious"
       },
       {
         "title": "Directory Structure Blueprint",
         "svgIcon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z\"/></svg>",
-        "contentHtml": "<div class=\"fw-tree\">\n    <span class=\"dir\">src/</span>\n    ├── index.ts                      <span class=\"comment\"># Elysia app assembly + listen</span>\n    ├── <span class=\"dir\">app/</span>\n    │   └── eden.ts                   <span class=\"comment\"># Exported App type for Eden Treaty</span>\n    ├── <span class=\"dir\">modules/</span>\n    │   ├── <span class=\"dir\">auth/</span>\n    │   │   ├── auth.controller.ts    <span class=\"comment\"># Route definitions</span>\n    │   │   ├── auth.service.ts       <span class=\"comment\"># Business logic</span>\n    │   │   ├── auth.schema.ts        <span class=\"comment\"># Elysia t.* schemas</span>\n    │   │   └── auth.model.ts         <span class=\"comment\"># Drizzle table defs</span>\n    │   ├── <span class=\"dir\">posts/</span>\n    │   │   ├── posts.controller.ts\n    │   │   ├── posts.service.ts\n    │   │   ├── posts.schema.ts\n    │   │   └── posts.model.ts\n    │   └── <span class=\"dir\">users/</span>\n    ├── <span class=\"dir\">plugins/</span>\n    │   ├── auth.plugin.ts            <span class=\"comment\"># JWT guard + user resolution</span>\n    │   ├── db.plugin.ts              <span class=\"comment\"># Drizzle client injection</span>\n    │   └── cors.plugin.ts\n    ├── <span class=\"dir\">db/</span>\n    │   ├── index.ts                  <span class=\"comment\"># drizzle(client)</span>\n    │   └── <span class=\"dir\">migrations/</span>\n    ├── <span class=\"dir\">lib/</span>\n    │   ├── jwt.ts\n    │   └── hash.ts\n    └── <span class=\"dir\">tests/</span>\n        └── auth.test.ts             <span class=\"comment\"># Bun test runner</span>\n</div>",
+        "contentHtml": "<div class=\"fw-tree\">\n    <span class=\"dir\">src/</span>data/\n    ├── <span class=\"dir\">vector/</span>\n    │   ├── store.ts                  <span class=\"comment\"># pgvector / Pinecone adapter</span>\n    │   ├── embedder.ts               <span class=\"comment\"># OpenAI / Cohere embedding client</span>\n    │   └── query.ts                  <span class=\"comment\"># Similarity search + filtering</span>\n    ├── <span class=\"dir\">pipeline/</span>\n    │   ├── chunker.ts                <span class=\"comment\"># Semantic + sliding window</span>\n    │   ├── indexer.ts                <span class=\"comment\"># Batch document ingestion</span>\n    │   └── reranker.ts               <span class=\"comment\"># Cohere / cross-encoder</span>\n    ├── <span class=\"dir\">hybrid/</span>\n    │   ├── searcher.ts               <span class=\"comment\"># Vector + full-text + RRF fusion</span>\n    │   └── retriever.ts              <span class=\"comment\"># Unified retrieval interface</span>\n    ├── <span class=\"dir\">graph/</span>\n    │   ├── neo4j-client.ts           <span class=\"comment\"># Graph database client</span>\n    │   ├── entity-extractor.ts       <span class=\"comment\"># LLM-based entity extraction</span>\n    │   └── knowledge-graph.ts        <span class=\"comment\"># Graph construction + query</span>\n    ├── <span class=\"dir\">cache/</span>\n    │   ├── semantic-cache.ts         <span class=\"comment\"># Cache similar queries</span>\n    │   └── embedding-cache.ts        <span class=\"comment\"># Cache embeddings</span>\n    └── <span class=\"dir\">migrations/</span>\n        ├── 001_create_docs.sql\n        ├── 002_add_vector.sql         <span class=\"comment\"># CREATE EXTENSION vector</span>\n        └── 003_create_index.sql       <span class=\"comment\"># IVFFlat / HNSW index</span>\n</div>",
         "fullWidth": true,
         "tier": "serious"
       },
       {
-        "title": "When Not To Use Elysia",
-        "svgIcon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z\"/></svg>",
-        "contentHtml": "<p><strong>Don't use Elysia when:</strong> Need mature npm ecosystem with all Node.js packages — Bun compatibility is good but not 100%. Deploying to traditional Node.js servers — Elysia is optimized for Bun. Team has extensive Express middleware dependencies. Need long-term stability in a conservative organization — Bun is relatively new.</p>",
+        "title": "Database Selection Guide",
+        "svgIcon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z\"/></svg>",
+        "contentHtml": "<table class=\"fw-table\"><tr><th>Scale</th><th>Best Choice</th><th>Why</th></tr><tr><td>&lt; 1M vectors</td><td>PostgreSQL + pgvector</td><td>Single DB for everything, no extra service, full SQL power. HNSW index for performance.</td></tr><tr><td>1M - 50M vectors</td><td>Pinecone / Weaviate</td><td>Managed, auto-scaling, built-in metadata filtering. Zero ops overhead.</td></tr><tr><td>&gt; 50M vectors</td><td>Pinecone Serverless / Elasticsearch</td><td>Massive scale, built for production search workloads.</td></tr><tr><td>Prototype / Local</td><td>Chroma / LanceDB</td><td>Embedded, zero-config. SQLite-like simplicity for vector search.</td></tr><tr><td>Knowledge Graph</td><td>Neo4j / Apache AGE</td><td>Entity relationships, multi-hop reasoning, graph-native queries.</td></tr></table>",
+        "fullWidth": false,
+        "tier": "all"
+      },
+      {
+        "title": "Why pgvector Wins for Most Projects",
+        "svgIcon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z\"/></svg>",
+        "contentHtml": "<p>pgvector eliminates the vector DB vs. relational DB tradeoff. Your app data (users, orders, documents) lives alongside embeddings in the same PostgreSQL database. Vector similarity search is a SQL query. Transactions span both relational and vector data. Backups, replication, and access control are unified. For 90% of AI applications, pgvector + PostgreSQL is the correct choice — Pinecone/Weaviate only when you hit scale limits. Drizzle ORM and Prisma both support pgvector natively.</p>",
         "fullWidth": false,
         "tier": "serious"
       },
       {
         "title": "Complementary Stack",
         "svgIcon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><rect x=\"2\" y=\"3\" width=\"20\" height=\"14\" rx=\"2\" /><line x1=\"8\" y1=\"21\" x2=\"16\" y2=\"21\" /><line x1=\"12\" y1=\"17\" x2=\"12\" y2=\"21\" /></svg>",
-        "contentHtml": "<table class=\"fw-table\"><tr><th>Concern</th><th>Library</th></tr><tr><td>Runtime</td><td>Bun</td></tr><tr><td>Schema</td><td>Elysia TypeSystem + Zod</td></tr><tr><td>ORM</td><td>Drizzle ORM</td></tr><tr><td>Database</td><td>Bun SQLite / Turso / Neon</td></tr><tr><td>Auth</td><td>Lucia v3</td></tr><tr><td>Client</td><td>Eden Treaty (typed fetch)</td></tr><tr><td>Testing</td><td>Bun test (built-in)</td></tr><tr><td>File Storage</td><td>Bun S3 / UploadThing</td></tr></table>",
+        "contentHtml": "<table class=\"fw-table\"><tr><th>Concern</th><th>Library</th></tr><tr><td>Vector Store</td><td>pgvector (PostgreSQL) / Pinecone / Chroma</td></tr><tr><td>Embedding Model</td><td>text-embedding-3-small (OpenAI) / Cohere Embed v3</td></tr><tr><td>Full-Text Search</td><td>PostgreSQL tsvector / Elasticsearch</td></tr><tr><td>Graph DB</td><td>Neo4j / Apache AGE (PostgreSQL extension)</td></tr><tr><td>Document Loaders</td><td>LangChain loaders / LlamaIndex readers</td></tr><tr><td>Chunking</td><td>LangChain text splitters / Custom semantic chunker</td></tr><tr><td>Reranking</td><td>Cohere Rerank / BGE-reranker (local)</td></tr><tr><td>Caching</td><td>Redis (semantic cache) + PostgreSQL (embedding cache)</td></tr><tr><td>ORM</td><td>Drizzle ORM (pgvector support) / Prisma</td></tr></table>",
         "fullWidth": false,
         "tier": "all"
       }
     ]
   },
   {
-    "id": "gin",
-    "cat": "backend",
-    "name": "Gin (Go)",
-    "icon": "GI",
-    "archBadge": "Handler-Based + Middleware Chain",
+    "id": "nextjs-nestjs",
+    "cat": "fullstack",
+    "name": "Next.js + NestJS",
+    "icon": "NN",
+    "archBadge": "RSC Gateway + Hexagonal API Backend",
     "blocks": [
-      {
-        "title": "Small Project Architecture",
-        "svgIcon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5\"/></svg>",
-        "contentHtml": "<p><strong>Flat handlers + GORM/database/sql in a single main.go.</strong> Use Gin's RouterGroup for route grouping, GORM or sqlc for database access, and gin.Context for request/response. Handlers contain business logic directly. No explicit service layer — keep it simple, idiomatic Go.</p>",
-        "fullWidth": false,
-        "tier": "small"
-      },
-      {
-        "title": "Small Project Directory Structure",
-        "svgIcon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z\"/></svg>",
-        "contentHtml": "<div class=\"fw-tree\">\n<span class=\"dir\">cmd/server/</span>\n└── main.go               <span class=\"comment\"># Router setup + ListenAndServe</span>\n<span class=\"dir\">internal/</span>\n├── <span class=\"dir\">handler/</span>\n│   ├── auth.go\n│   ├── user.go\n│   └── post.go\n├── <span class=\"dir\">model/</span>              <span class=\"comment\"># Structs + GORM models</span>\n├── <span class=\"dir\">db/</span>\n│   └── db.go             <span class=\"comment\"># GORM/sqlc setup</span>\n└── <span class=\"dir\">middleware/</span>          <span class=\"comment\"># Auth, CORS</span>\n</div>",
-        "fullWidth": true,
-        "tier": "small"
-      },
       {
         "title": "Golden Standard Architecture",
         "svgIcon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5\"/></svg>",
-        "contentHtml": "<p><strong>Handler-Based Architecture with Middleware Chain and Interface-Driven Design.</strong> Gin's performance (up to 40x faster than Express) comes from its custom httprouter (radix tree). Handlers accept <code>*gin.Context</code> — a pooled, zero-allocation context. Service interfaces define contracts; handler layers depend on interfaces, not implementations. sqlc generates type-safe Go from SQL — no ORM overhead.</p>",
+        "contentHtml": "<p><strong>Next.js RSC Gateway + NestJS Hexagonal API.</strong> The most structured fullstack TypeScript pairing. Next.js handles SSR, React Server Components, and the BFF (Backend-For-Frontend) layer. NestJS provides the domain API with hexagonal architecture, CQRS, and DI. Both share TypeScript types via a monorepo package. This is the enterprise-grade choice: full type safety from database to UI, structured DI on the backend, React's ecosystem on the frontend.</p>",
         "fullWidth": false,
         "tier": "serious"
       },
       {
-        "title": "Data & State Flow",
+        "title": "Data & Request Flow",
         "svgIcon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><polyline points=\"22 12 18 12 15 21 9 3 6 12 2 12\"/></svg>",
-        "contentHtml": "<ul><li><strong>Request → Middleware Chain (CORS, auth, logging, recovery) → Route Handler → Service → Repository → DB</strong></li><li><strong>gin.Context</strong> — holds request/response, params, query, errors; pooled and reused for zero GC pressure</li><li><strong>Binding & Validation</strong> — <code>c.ShouldBindJSON(&amp;obj)</code> with struct tags for validation (<code>binding:&quot;required&quot;</code>)</li><li><strong>Interface-based DI</strong> — handlers accept interfaces; <code>wire</code> or manual composition in <code>main.go</code></li><li><strong>sqlc</strong> — generates 100% type-safe Go from SQL queries; no runtime reflection, no ORM N+1 surprises</li><li><strong>log/slog</strong> — Go 1.24+ stdlib structured logging with levels, attributes, and handler middleware</li></ul>",
+        "contentHtml": "<ul><li><strong>Browser → Next.js SSR (RSC) → NestJS API → DB</strong> — server components fetch from NestJS, cache, and render HTML</li><li><strong>Browser → Next.js Server Actions → NestJS → DB</strong> — mutations go through Server Actions which call NestJS endpoints</li><li><strong>Browser → Next.js API Routes → NestJS (proxy)</strong> — thin proxy routes for client-side mutations, attach auth headers</li><li><strong>NestJS Hexagonal Layers:</strong> Controller (HTTP) → Application Service (use cases) → Domain Service (business rules) → Repository (ports) → Adapter (PostgreSQL/Redis)</li><li><strong>Shared package (@repo/shared)</strong> — Zod DTOs, TypeScript interfaces, error codes — single source of truth for API contracts</li></ul>",
         "fullWidth": false,
         "tier": "serious"
       },
       {
-        "title": "Directory Structure Blueprint",
+        "title": "Monorepo Directory Structure",
         "svgIcon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z\"/></svg>",
-        "contentHtml": "<div class=\"fw-tree\">\n    <span class=\"dir\">cmd/server/</span>\n    ├── main.go                       <span class=\"comment\"># Wire up router, middleware, DI</span>\n    └── wire.go                       <span class=\"comment\"># Go wire injection (optional)</span>\n    <span class=\"dir\">internal/</span>\n    ├── <span class=\"dir\">feature/</span>\n    │   ├── <span class=\"dir\">auth/</span>\n    │   │   ├── handler.go            <span class=\"comment\"># Auth HTTP handlers</span>\n    │   │   ├── service.go            <span class=\"comment\"># AuthService interface + impl</span>\n    │   │   ├── repository.go         <span class=\"comment\"># AuthRepository interface + impl</span>\n    │   │   └── model.go              <span class=\"comment\"># Request/Response DTOs</span>\n    │   ├── <span class=\"dir\">user/</span>\n    │   │   ├── handler.go\n    │   │   ├── service.go\n    │   │   ├── repository.go\n    │   │   └── model.go\n    │   └── <span class=\"dir\">post/</span>\n    ├── <span class=\"dir\">database/</span>\n    │   ├── db.go                     <span class=\"comment\"># sql.DB pool + connection</span>\n    │   ├── <span class=\"dir\">query/</span>                  <span class=\"comment\"># sqlc generated code</span>\n    │   └── <span class=\"dir\">migrations/</span>\n    │       ├── 001_create_users.up.sql\n    │       └── 001_create_users.down.sql\n    ├── <span class=\"dir\">middleware/</span>\n    │   ├── auth.go                   <span class=\"comment\"># JWT validation</span>\n    │   ├── logger.go                 <span class=\"comment\"># slog middleware</span>\n    │   └── recovery.go               <span class=\"comment\"># Panic recovery</span>\n    ├── <span class=\"dir\">config/</span>\n    │   └── config.go                 <span class=\"comment\"># Env vars + defaults</span>\n    └── <span class=\"dir\">errors/</span>\n        └── errors.go                 <span class=\"comment\"># Custom error types</span>\n    <span class=\"dir\">test/</span>\n    ├── <span class=\"dir\">integration/</span>\n    └── <span class=\"dir\">testutil/</span>\n</div>",
+        "contentHtml": "<div class=\"fw-tree\">\n    <span class=\"dir\">apps/</span>web/                            <span class=\"comment\"># Next.js</span>\n    ├── <span class=\"dir\">src/</span>app/\n    │   ├── layout.tsx                 <span class=\"comment\"># Root layout + providers</span>\n    │   ├── page.tsx                   <span class=\"comment\"># RSC: fetch NestJS data</span>\n    │   ├── <span class=\"dir\">(auth)/</span>\n    │   │   ├── login/page.tsx\n    │   │   └── register/page.tsx\n    │   ├── <span class=\"dir\">(dashboard)/</span>\n    │   │   ├── layout.tsx\n    │   │   ├── page.tsx\n    │   │   └── analytics/page.tsx\n    │   └── <span class=\"dir\">api/</span>                     <span class=\"comment\"># Proxy → NestJS</span>\n    │       └── [...path]/route.ts\n    ├── <span class=\"dir\">src/</span>lib/\n    │   ├── api-client.ts              <span class=\"comment\"># Typed NestJS HTTP client</span>\n    │   └── auth.ts                    <span class=\"comment\"># next-auth config</span>\n    ├── next.config.ts\n    └── package.json\n    <span class=\"dir\">apps/</span>api/                            <span class=\"comment\"># NestJS</span>\n    ├── <span class=\"dir\">src/</span>\n    │   ├── main.ts                    <span class=\"comment\"># Bootstrap + global pipes</span>\n    │   ├── <span class=\"dir\">auth/</span>                      <span class=\"comment\"># Feature module</span>\n    │   │   ├── auth.controller.ts\n    │   │   ├── auth.service.ts\n    │   │   ├── auth.module.ts\n    │   │   ├── <span class=\"dir\">dto/</span>\n    │   │   │   ├── login.dto.ts\n    │   │   │   └── register.dto.ts\n    │   │   └── <span class=\"dir\">strategies/</span>\n    │   ├── <span class=\"dir\">users/</span>\n    │   ├── <span class=\"dir\">orders/</span>\n    │   ├── <span class=\"dir\">common/</span>\n    │   │   ├── <span class=\"dir\">decorators/</span>\n    │   │   ├── <span class=\"dir\">filters/</span>\n    │   │   ├── <span class=\"dir\">guards/</span>\n    │   │   └── <span class=\"dir\">interceptors/</span>\n    │   └── <span class=\"dir\">infra/</span>\n    │       ├── <span class=\"dir\">database/</span>\n    │       │   └── prisma.service.ts\n    │       └── <span class=\"dir\">config/</span>\n    ├── nest-cli.json\n    └── package.json\n    <span class=\"dir\">packages/</span>shared/\n    ├── <span class=\"dir\">src/</span>\n    │   ├── dto.ts                     <span class=\"comment\"># Zod schemas → OpenAPI</span>\n    │   ├── types.ts                   <span class=\"comment\"># Shared TypeScript types</span>\n    │   └── errors.ts                  <span class=\"comment\"># Error codes enum</span>\n    └── package.json\n    turbo.json\n    package.json\n</div>",
         "fullWidth": true,
         "tier": "serious"
       },
       {
-        "title": "When Not To Use Gin",
+        "title": "Small Project (Single Next.js)",
+        "svgIcon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5\"/></svg>",
+        "contentHtml": "<p><strong>For smaller teams, skip NestJS.</strong> Use Next.js Server Actions with Drizzle directly. Add a <code>services/</code> layer in Next.js for business logic. Only split out NestJS when the backend grows beyond 15+ API routes or needs hexagonal architecture.</p>",
+        "fullWidth": false,
+        "tier": "small"
+      },
+      {
+        "title": "Small Project Structure",
+        "svgIcon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z\"/></svg>",
+        "contentHtml": "<div class=\"fw-tree\">\n    <span class=\"dir\">src/</span>\n    ├── <span class=\"dir\">app/</span>\n    │   ├── layout.tsx\n    │   ├── page.tsx\n    │   ├── <span class=\"dir\">auth/</span>\n    │   └── <span class=\"dir\">dashboard/</span>\n    ├── <span class=\"dir\">lib/</span>\n    │   ├── db.ts                      <span class=\"comment\"># Drizzle client</span>\n    │   ├── auth.ts                    <span class=\"comment\"># next-auth</span>\n    │   └── <span class=\"dir\">services/</span>               <span class=\"comment\"># Business logic</span>\n    └── <span class=\"dir\">components/</span>\n</div>",
+        "fullWidth": true,
+        "tier": "small"
+      },
+      {
+        "title": "Why This Combination Works",
+        "svgIcon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z\"/></svg>",
+        "contentHtml": "<p>This is the most structured TypeScript fullstack pairing. NestJS's DI container makes dependencies explicit and testable — something plain Express lacks. Next.js RSC eliminates the API-for-the-frontend problem. The shared types package means changing a DTO updates both frontend and backend simultaneously. The tradeoff: NestJS is verbose. You'll write more files than Express/Fastify. But for teams of 5+ building complex domains, the structure pays for itself in AI agent navigability and test coverage.</p>",
+        "fullWidth": false,
+        "tier": "serious"
+      },
+      {
+        "title": "When Not To Use This Stack",
         "svgIcon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z\"/></svg>",
-        "contentHtml": "<p><strong>Don't use Gin when:</strong> Need real-time WebSockets at scale — Go's stdlib net/http + gorilla/websocket is simpler. Building a standard library-focused team — Go 1.22+ net/http routing is good enough for simpler APIs. Team prefers ORM over SQL — Gin has no built-in ORM and Go ORMs have tradeoffs vs sqlc.</p>",
+        "contentHtml": "<p><strong>Don't use Next.js + NestJS when:</strong> Team under 3 people — NestJS ceremony outweighs benefits. Backend is simple CRUD — Next.js Server Actions + Drizzle is enough. You prefer functional composition over decorators. Rapid prototyping needed — Express/Fastify is faster to iterate.</p>",
         "fullWidth": false,
         "tier": "serious"
       },
       {
         "title": "Complementary Stack",
         "svgIcon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><rect x=\"2\" y=\"3\" width=\"20\" height=\"14\" rx=\"2\" /><line x1=\"8\" y1=\"21\" x2=\"16\" y2=\"21\" /><line x1=\"12\" y1=\"17\" x2=\"12\" y2=\"21\" /></svg>",
-        "contentHtml": "<table class=\"fw-table\"><tr><th>Concern</th><th>Library</th></tr><tr><td>Routing</td><td>Gin (httprouter)</td></tr><tr><td>SQL</td><td>sqlc + pgx / GORM</td></tr><tr><td>Migrations</td><td>golang-migrate / atlas</td></tr><tr><td>Auth</td><td>golang-jwt + bcrypt</td></tr><tr><td>Config</td><td>viper / envconfig</td></tr><tr><td>Validation</td><td>go-playground/validator</td></tr><tr><td>Testing</td><td>testify + httptest + testcontainers-go</td></tr><tr><td>Logging</td><td>log/slog (stdlib)</td></tr></table>",
+        "contentHtml": "<table class=\"fw-table\"><tr><th>Concern</th><th>Library</th></tr><tr><td>Monorepo</td><td>Turborepo</td></tr><tr><td>Frontend</td><td>Next.js (App Router + RSC)</td></tr><tr><td>Backend</td><td>NestJS (Fastify adapter)</td></tr><tr><td>Validation</td><td>Zod (shared) + class-validator (NestJS)</td></tr><tr><td>ORM</td><td>Prisma / Drizzle</td></tr><tr><td>Auth</td><td>next-auth + @nestjs/passport</td></tr><tr><td>Testing</td><td>Vitest + Playwright (E2E) + Jest (NestJS)</td></tr><tr><td>Deploy</td><td>Docker Compose / Railway / Vercel + Fly.io</td></tr></table>",
         "fullWidth": false,
         "tier": "all"
       }
     ]
   },
   {
-    "id": "phoenix",
-    "cat": "backend",
-    "name": "Phoenix / Elixir",
-    "icon": "PH",
-    "archBadge": "MVC + LiveView + OTP Supervisors",
+    "id": "nextjs-fastapi",
+    "cat": "fullstack",
+    "name": "Next.js + FastAPI",
+    "icon": "NF",
+    "archBadge": "RSC BFF + Python Service Layer (AI-Ready)",
     "blocks": [
-      {
-        "title": "Small Project Architecture",
-        "svgIcon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5\"/></svg>",
-        "contentHtml": "<p><strong>Phoenix generators + contexts in a standard Phoenix project.</strong> Use <code>mix phx.gen.live</code> to scaffold LiveViews with embedded Ecto schemas. Schemas in <code>lib/my_app/</code>, contexts encapsulate business logic, templates are .heex files. Use Phoenix PubSub for in-memory pub/sub. No elaborate layering — contexts + schemas + LiveViews.</p>",
-        "fullWidth": false,
-        "tier": "small"
-      },
-      {
-        "title": "Small Project Directory Structure",
-        "svgIcon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z\"/></svg>",
-        "contentHtml": "<div class=\"fw-tree\">\n<span class=\"dir\">lib/my_app/</span>\n├── application.ex        <span class=\"comment\"># OTP Application + Supervisor tree</span>\n├── <span class=\"dir\">accounts/</span>\n│   ├── user.ex           <span class=\"comment\"># Ecto schema</span>\n│   └── accounts.ex       <span class=\"comment\"># Context module</span>\n├── <span class=\"dir\">blog/</span>\n│   ├── post.ex\n│   └── blog.ex\n├── <span class=\"dir\">my_app_web/</span>\n│   ├── <span class=\"dir\">live/</span>            <span class=\"comment\"># LiveView modules</span>\n│   ├── <span class=\"dir\">components/</span>      <span class=\"comment\"># Function components</span>\n│   └── router.ex\n└── repo.ex               <span class=\"comment\"># Ecto.Repo</span>\n</div>",
-        "fullWidth": true,
-        "tier": "small"
-      },
       {
         "title": "Golden Standard Architecture",
         "svgIcon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5\"/></svg>",
-        "contentHtml": "<p><strong>MVC with LiveView Real-Time Server-Rendered UI and OTP Supervisor Trees.</strong> Phoenix LiveView maintains a persistent WebSocket connection — state lives on the server, not the client. UI updates are diffed server-side and pushed as minimal HTML patches (sub-millisecond). OTP (Erlang's actor model) provides process isolation, supervision, and fault tolerance — every LiveView is a separate BEAM process. Contexts organize business logic as bounded contexts.</p>",
+        "contentHtml": "<p><strong>The canonical AI agent stack.</strong> Next.js handles the UI, auth, and BFF layer. FastAPI owns the Python ecosystem — LLM calls, embedding generation, data pipelines, ML inference. FastAPI's async support and Pydantic validation make it the best Python backend for building tools that AI agents call. The architecture: Next.js RSC fetches from FastAPI endpoints, Server Actions proxy mutations. Shared contract via OpenAPI (generated from FastAPI) consumed by a typed TypeScript client.</p>",
         "fullWidth": false,
         "tier": "serious"
       },
       {
-        "title": "Data & State Flow",
+        "title": "Data & Request Flow",
         "svgIcon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><polyline points=\"22 12 18 12 15 21 9 3 6 12 2 12\"/></svg>",
-        "contentHtml": "<ul><li><strong>LiveView lifecycle</strong> — <code>mount/3</code> (initial state) → <code>handle_event/3</code> (user actions) → <code>handle_info/2</code> (async messages) → re-render diff</li><li><strong>Phoenix PubSub</strong> — in-memory distributed pub/sub across cluster nodes; broadcasts to LiveView processes</li><li><strong>Phoenix Channels</strong> — WebSocket abstraction; LiveView is built on Channels</li><li><strong>Ecto</strong> — schema + changeset + query + repo; changesets provide validation pipeline</li><li><strong>OTP Supervisors</strong> — every process runs in a supervision tree; crashes are isolated and auto-restarted</li><li><strong>Phoenix Presence</strong> — CRDT-based distributed presence tracking (which users are online, in which rooms)</li></ul>",
+        "contentHtml": "<ul><li><strong>Browser → Next.js RSC → FastAPI → DB/LLM</strong> — server components call FastAPI, cache, render</li><li><strong>Browser → Next.js Server Action → FastAPI</strong> — mutations hit FastAPI for business logic + Python processing</li><li><strong>FastAPI Dependency Injection</strong> — <code>Depends(get_db)</code> auto-injects DB sessions; <code>Depends(get_current_user)</code> for auth</li><li><strong>OpenAPI contract</strong> — FastAPI auto-generates OpenAPI spec → openapi-typescript generates typed TS client → shared in monorepo</li><li><strong>LangChain/LlamaIndex on FastAPI</strong> — agent tools exposed as FastAPI endpoints; Next.js calls them via typed client</li><li><strong>Background tasks</strong> — FastAPI's <code>BackgroundTasks</code> or Celery for long-running LLM chains; Next.js polls for results</li></ul>",
         "fullWidth": false,
         "tier": "serious"
       },
       {
-        "title": "Directory Structure Blueprint",
+        "title": "Monorepo Directory Structure",
         "svgIcon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z\"/></svg>",
-        "contentHtml": "<div class=\"fw-tree\">\n    <span class=\"dir\">lib/my_app/</span>\n    ├── application.ex                 <span class=\"comment\"># OTP Application + children</span>\n    ├── <span class=\"dir\">accounts/</span>\n    │   ├── accounts.ex               <span class=\"comment\"># Context: public API</span>\n    │   ├── user.ex                   <span class=\"comment\"># Ecto schema</span>\n    │   ├── user_token.ex             <span class=\"comment\"># Ecto schema (tokens)</span>\n    │   └── user_notifier.ex          <span class=\"comment\"># Email dispatch</span>\n    ├── <span class=\"dir\">blog/</span>\n    │   ├── blog.ex                   <span class=\"comment\"># Context</span>\n    │   ├── post.ex                   <span class=\"comment\"># Schema</span>\n    │   └── comment.ex                <span class=\"comment\"># Schema</span>\n    ├── <span class=\"dir\">my_app_web/</span>\n    │   ├── <span class=\"dir\">live/</span>\n    │   │   ├── <span class=\"dir\">auth/</span>\n    │   │   │   ├── login_live.ex     <span class=\"comment\"># LiveView module</span>\n    │   │   │   └── registration_live.ex\n    │   │   ├── <span class=\"dir\">dashboard/</span>\n    │   │   │   └── index_live.ex\n    │   │   └── <span class=\"dir\">blog/</span>\n    │   │   ├── post_live.ex\n    │   │   └── <span class=\"dir\">components/</span>\n    │   │   └── post_card.ex\n    │   ├── <span class=\"dir\">components/</span>\n    │   │   ├── core_components.ex    <span class=\"comment\"># Shared function components</span>\n    │   │   └── layouts.ex            <span class=\"comment\"># Layout components</span>\n    │   ├── router.ex                 <span class=\"comment\"># Phoenix Router (LiveView + REST)</span>\n    │   └── endpoint.ex               <span class=\"comment\"># HTTP/WebSocket endpoint</span>\n    ├── repo.ex                       <span class=\"comment\"># Ecto.Repo with DB config</span>\n    └── mailer.ex\n    <span class=\"dir\">priv/</span>repo/migrations/\n    ├── 20240101000000_create_users.exs\n    └── 20240102000000_create_posts.exs\n    <span class=\"dir\">test/</span>\n    ├── <span class=\"dir\">my_app/</span>\n    │   └── accounts_test.exs\n    ├── <span class=\"dir\">my_app_web/</span>\n    │   └── <span class=\"dir\">live/</span>\n    │       └── auth/login_live_test.exs\n    └── <span class=\"dir\">support/</span>\n        ├── conn_case.ex\n        └── fixtures/</div>",
+        "contentHtml": "<div class=\"fw-tree\">\n    <span class=\"dir\">apps/</span>web/                            <span class=\"comment\"># Next.js</span>\n    ├── <span class=\"dir\">src/</span>app/\n    │   ├── layout.tsx\n    │   ├── page.tsx                   <span class=\"comment\"># RSC: fetch FastAPI</span>\n    │   ├── <span class=\"dir\">chat/</span>                      <span class=\"comment\"># AI chat UI</span>\n    │   │   ├── page.tsx\n    │   │   └── <span class=\"dir\">actions/</span>\n    │   │       └── send-message.ts   <span class=\"comment\"># Server Action → FastAPI</span>\n    │   └── <span class=\"dir\">api/</span>\n    │       └── [...path]/route.ts    <span class=\"comment\"># Proxy → FastAPI</span>\n    ├── <span class=\"dir\">src/</span>lib/\n    │   └── api-client.ts              <span class=\"comment\"># Generated from FastAPI OpenAPI</span>\n    └── package.json\n    <span class=\"dir\">apps/</span>api/                            <span class=\"comment\"># FastAPI</span>\n    ├── <span class=\"dir\">app/</span>\n    │   ├── main.py                    <span class=\"comment\"># FastAPI app + CORS + lifespan</span>\n    │   ├── <span class=\"dir\">api/</span>\n    │   │   ├── <span class=\"dir\">v1/</span>\n    │   │   │   ├── __init__.py\n    │   │   │   ├── auth.py\n    │   │   │   ├── users.py\n    │   │   │   ├── chat.py            <span class=\"comment\"># LLM agent endpoints</span>\n    │   │   │   └── embeddings.py     <span class=\"comment\"># Vector search endpoints</span>\n    │   │   └── deps.py                <span class=\"comment\"># Dependency injection</span>\n    │   ├── <span class=\"dir\">core/</span>\n    │   │   ├── config.py              <span class=\"comment\"># Pydantic-settings</span>\n    │   │   ├── security.py\n    │   │   └── database.py\n    │   ├── <span class=\"dir\">models/</span>                    <span class=\"comment\"># SQLAlchemy ORM models</span>\n    │   ├── <span class=\"dir\">schemas/</span>                   <span class=\"comment\"># Pydantic DTOs</span>\n    │   ├── <span class=\"dir\">services/</span>\n    │   │   ├── auth_service.py\n    │   │   ├── chat_service.py        <span class=\"comment\"># LLM orchestration</span>\n    │   │   └── rag_service.py         <span class=\"comment\"># RAG pipeline</span>\n    │   ├── <span class=\"dir\">agents/</span>\n    │   │   ├── tools.py               <span class=\"comment\"># Agent tool definitions</span>\n    │   │   └── orchestrator.py\n    │   └── <span class=\"dir\">tasks/</span>                    <span class=\"comment\"># Celery background tasks</span>\n    ├── requirements.txt\n    └── pyproject.toml\n    <span class=\"dir\">packages/</span>api-client/                 <span class=\"comment\"># Generated TS types</span>\n    └── <span class=\"dir\">src/</span>\n        └── index.ts                   <span class=\"comment\"># Typed client from OpenAPI</span>\n    turbo.json\n</div>",
         "fullWidth": true,
         "tier": "serious"
       },
       {
-        "title": "When Not To Use Phoenix",
+        "title": "Why This Combination Works",
+        "svgIcon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z\"/></svg>",
+        "contentHtml": "<p>This is the go-to stack for AI-powered applications. Python owns the ML/AI ecosystem — there is no serious competitor. FastAPI gives Python a modern, async, type-safe HTTP layer. Next.js gives TypeScript the best React framework. Together: Python handles LLMs, embeddings, data science; TypeScript handles UI, auth, and the BFF. The OpenAPI contract between them ensures the integration doesn't rot. This architecture separates the languages cleanly rather than fighting either ecosystem.</p>",
+        "fullWidth": false,
+        "tier": "serious"
+      },
+      {
+        "title": "When Not To Use This Stack",
         "svgIcon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z\"/></svg>",
-        "contentHtml": "<p><strong>Don't use Phoenix when:</strong> Building a simple REST API with no real-time needs — FastAPI or Express is simpler. Team has zero Elixir/functional programming experience — the learning curve is real. Need the largest library ecosystem — Elixir's ecosystem is smaller than JavaScript/Python. App is CPU-bound — BEAM is optimized for I/O, not number crunching.</p>",
+        "contentHtml": "<p><strong>Don't use Next.js + FastAPI when:</strong> You don't need Python (no ML/AI workloads) — single-language NestJS/Express is simpler. Team has no Python experience. Simple CRUD app — Next.js alone with Drizzle is sufficient. You need real-time WebSocket at scale — Python's async isn't as battle-tested as Node.js/Go.</p>",
         "fullWidth": false,
         "tier": "serious"
       },
       {
         "title": "Complementary Stack",
         "svgIcon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><rect x=\"2\" y=\"3\" width=\"20\" height=\"14\" rx=\"2\" /><line x1=\"8\" y1=\"21\" x2=\"16\" y2=\"21\" /><line x1=\"12\" y1=\"17\" x2=\"12\" y2=\"21\" /></svg>",
-        "contentHtml": "<table class=\"fw-table\"><tr><th>Concern</th><th>Library</th></tr><tr><td>Web Framework</td><td>Phoenix + Phoenix LiveView</td></tr><tr><td>Database</td><td>Ecto + Postgrex (PostgreSQL)</td></tr><tr><td>Background Jobs</td><td>Oban / Broadway</td></tr><tr><td>Auth</td><td>phx_gen_auth / Ash Authentication</td></tr><tr><td>Caching</td><td>Nebulex (ETS + Redis)</td></tr><tr><td>GraphQL</td><td>Absinthe</td></tr><tr><td>Testing</td><td>ExUnit + Phoenix.ConnTest</td></tr><tr><td>Deployment</td><td>Fly.io / Gigalixir</td></tr></table>",
+        "contentHtml": "<table class=\"fw-table\"><tr><th>Concern</th><th>Library</th></tr><tr><td>Frontend</td><td>Next.js (App Router + RSC)</td></tr><tr><td>Backend</td><td>FastAPI + Uvicorn</td></tr><tr><td>LLM Framework</td><td>LangChain / LlamaIndex</td></tr><tr><td>ORM</td><td>SQLAlchemy 2.0 + Alembic (migrations)</td></tr><tr><td>Validation</td><td>Pydantic v2 (FastAPI native)</td></tr><tr><td>Vector Store</td><td>pgvector (PostgreSQL)</td></tr><tr><td>Task Queue</td><td>Celery + Redis / ARQ</td></tr><tr><td>API Contract</td><td>OpenAPI → openapi-typescript</td></tr><tr><td>Deploy</td><td>Vercel (Next.js) + Railway/Fly.io (FastAPI)</td></tr></table>",
         "fullWidth": false,
         "tier": "all"
       }
     ]
   },
   {
-    "id": "astro",
-    "cat": "frontend",
-    "name": "Astro",
-    "icon": "AS",
-    "archBadge": "Islands Architecture + Content Collections",
+    "id": "nuxt-laravel",
+    "cat": "fullstack",
+    "name": "Nuxt + Laravel",
+    "icon": "NL",
+    "archBadge": "SSR + Action Classes + Eloquent ORM",
     "blocks": [
-      {
-        "title": "Small Project Architecture",
-        "svgIcon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5\"/></svg>",
-        "contentHtml": "<p><strong>Astro pages + components in a single project.</strong> Use Astro's file-based routing with <code>.astro</code> component files. Markdown/MDX for content. Server-rendered HTML by default — zero JavaScript shipped unless you opt in with <code>client:load</code> directives. Content Collections for type-safe Markdown. Simple, fast, content-first.</p>",
-        "fullWidth": false,
-        "tier": "small"
-      },
-      {
-        "title": "Small Project Directory Structure",
-        "svgIcon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z\"/></svg>",
-        "contentHtml": "<div class=\"fw-tree\">\n<span class=\"dir\">src/</span>\n├── <span class=\"dir\">pages/</span>\n│   ├── index.astro        <span class=\"comment\"># Home page</span>\n│   ├── about.astro\n│   └── <span class=\"dir\">blog/</span>\n│       ├── index.astro    <span class=\"comment\"># Blog listing</span>\n│       └── [slug].astro   <span class=\"comment\"># Dynamic route</span>\n├── <span class=\"dir\">components/</span>          <span class=\"comment\"># .astro components</span>\n├── <span class=\"dir\">layouts/</span>            <span class=\"comment\"># BaseLayout.astro</span>\n├── <span class=\"dir\">content/</span>             <span class=\"comment\"># Markdown/MDX posts</span>\n└── astro.config.mjs\n</div>",
-        "fullWidth": true,
-        "tier": "small"
-      },
       {
         "title": "Golden Standard Architecture",
         "svgIcon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5\"/></svg>",
-        "contentHtml": "<p><strong>Islands Architecture with Content Collections and View Transitions.</strong> Astro renders pages to static HTML at build time or on-demand (SSR). Interactive \"islands\" (React, Vue, Svelte, Solid components) hydrate independently — each island loads only its framework runtime. Content Collections provide type-safe, Zod-validated content management. View Transitions API enables SPA-like page transitions between static pages without a JS router.</p>",
+        "contentHtml": "<p><strong>Nuxt SSR + Laravel MVC with Action Classes.</strong> The most popular Vue fullstack pairing. Nuxt 3 handles SSR, auto-imports, and the Vue Composition API frontend. Laravel provides the backend with Eloquent ORM, Action classes, Queues, and Horizon. Communication via Laravel's API routes (JSON) consumed by Nuxt's <code>useFetch</code> / <code>$fetch</code>. Laravel Sanctum for SPA authentication. This stack ships features faster than almost any other due to Laravel's batteries-included philosophy.</p>",
         "fullWidth": false,
         "tier": "serious"
       },
       {
-        "title": "Data & State Flow",
+        "title": "Data & Request Flow",
         "svgIcon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><polyline points=\"22 12 18 12 15 21 9 3 6 12 2 12\"/></svg>",
-        "contentHtml": "<ul><li><strong>Content Collections</strong> — type-safe Markdown/MDX with Zod schemas; <code>getCollection('posts')</code> returns typed entries</li><li><strong>Islands</strong> — <code>&lt;Component client:load /&gt;</code> directives: <code>client:load</code> (on mount), <code>client:idle</code> (on idle), <code>client:visible</code> (on scroll), <code>client:media</code> (on breakpoint), <code>client:only</code> (no SSR)</li><li><strong>Zero JS by default</strong> — every page ships 0KB of JavaScript unless you explicitly add an island</li><li><strong>View Transitions</strong> — native browser API for SPA-like page transitions; Astro routes maintain <code>&lt;head&gt;</code> and persistent elements</li><li><strong>SSR + On-demand rendering</strong> — <code>output: 'hybrid'</code> for static + server routes; deploy anywhere (Cloudflare, Vercel, Netlify, Deno)</li></ul>",
+        "contentHtml": "<ul><li><strong>Browser → Nuxt SSR → Laravel API → DB</strong> — <code>useAsyncData</code> fetches from Laravel on server; renders hydrated HTML</li><li><strong>Browser → Nuxt $fetch → Laravel API → DB</strong> — client-side mutations via <code>$fetch</code> with Sanctum cookie auth</li><li><strong>Laravel Action Classes</strong> — single-responsibility classes: <code>CreateOrderAction</code>, <code>ProcessPaymentAction</code>; controllers stay thin</li><li><strong>Eloquent ORM</strong> — Active Record pattern with relationships, scopes, accessors; migrations for schema versioning</li><li><strong>Laravel Queues + Horizon</strong> — background jobs (emails, reports, AI processing); Horizon dashboard for monitoring</li><li><strong>Laravel Sanctum</strong> — cookie-based SPA auth; no OAuth ceremony for first-party SPAs</li></ul>",
         "fullWidth": false,
         "tier": "serious"
       },
       {
-        "title": "Directory Structure Blueprint",
+        "title": "Monorepo Directory Structure",
         "svgIcon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z\"/></svg>",
-        "contentHtml": "<div class=\"fw-tree\">\n    <span class=\"dir\">src/</span>\n    ├── <span class=\"dir\">pages/</span>\n    │   ├── index.astro                 <span class=\"comment\"># Home</span>\n    │   ├── about.astro\n    │   ├── <span class=\"dir\">blog/</span>\n    │   │   ├── index.astro             <span class=\"comment\"># Paginated listing</span>\n    │   │   ├── [slug].astro            <span class=\"comment\"># Dynamic post route</span>\n    │   │   └── <span class=\"dir\">tag/</span>[tag].astro\n    │   └── rss.xml.ts                  <span class=\"comment\"># RSS endpoint</span>\n    ├── <span class=\"dir\">content/</span>\n    │   ├── config.ts                   <span class=\"comment\"># Collection schemas (Zod)</span>\n    │   ├── <span class=\"dir\">blog/</span>\n    │   │   ├── post-1.md\n    │   │   └── post-2.mdx\n    │   └── <span class=\"dir\">projects/</span>\n    ├── <span class=\"dir\">layouts/</span>\n    │   ├── BaseLayout.astro            <span class=\"comment\"># &lt;html&gt; shell + meta</span>\n    │   ├── BlogPostLayout.astro        <span class=\"comment\"># Post layout + Table of Contents</span>\n    │   └── MarkdownLayout.astro\n    ├── <span class=\"dir\">components/</span>\n    │   ├── Header.astro               <span class=\"comment\"># Static (0 JS)</span>\n    │   ├── Footer.astro\n    │   ├── Search.tsx                  <span class=\"comment\"># React island</span>\n    │   ├── ThemeToggle.svelte         <span class=\"comment\"># Svelte island</span>\n    │   └── CopyButton.vue             <span class=\"comment\"># Vue island</span>\n    ├── <span class=\"dir\">lib/</span>\n    │   ├── utils.ts                   <span class=\"comment\"># Helper functions</span>\n    │   └── constants.ts\n    └── <span class=\"dir\">styles/</span>\n        └── global.css\n    ├── astro.config.mjs                <span class=\"comment\"># Integrations + adapters</span>\n    ├── <span class=\"dir\">public/</span>\n    │   ├── favicon.ico\n    │   └── <span class=\"dir\">images/</span>\n    └── <span class=\"dir\">.astro/</span>                            <span class=\"comment\"># Astro generated types</span>\n</div>",
+        "contentHtml": "<div class=\"fw-tree\">\n    <span class=\"dir\">apps/</span>web/                            <span class=\"comment\"># Nuxt 3</span>\n    ├── <span class=\"dir\">pages/</span>\n    │   ├── index.vue\n    │   ├── <span class=\"dir\">auth/</span>\n    │   │   ├── login.vue\n    │   │   └── register.vue\n    │   └── <span class=\"dir\">dashboard/</span>\n    ├── <span class=\"dir\">composables/</span>\n    │   ├── useAuth.ts                <span class=\"comment\"># Sanctum auth composable</span>\n    │   └── useApi.ts                 <span class=\"comment\"># $fetch wrapper</span>\n    ├── <span class=\"dir\">components/</span>\n    ├── <span class=\"dir\">server/</span>\n    │   └── api/                      <span class=\"comment\"># Nuxt server routes (BFF)</span>\n    ├── nuxt.config.ts\n    └── package.json\n    <span class=\"dir\">apps/</span>api/                            <span class=\"comment\"># Laravel</span>\n    ├── <span class=\"dir\">app/</span>\n    │   ├── <span class=\"dir\">Http/</span>\n    │   │   ├── <span class=\"dir\">Controllers/</span>\n    │   │   │   └── <span class=\"dir\">Api/</span>\n    │   │   │       ├── AuthController.php\n    │   │   │       ├── UserController.php\n    │   │   │       └── OrderController.php\n    │   │   └── <span class=\"dir\">Middleware/</span>\n    │   ├── <span class=\"dir\">Actions/</span>                  <span class=\"comment\"># Single-responsibility classes</span>\n    │   │   ├── CreateOrderAction.php\n    │   │   └── ProcessPaymentAction.php\n    │   ├── <span class=\"dir\">Models/</span>\n    │   │   ├── User.php\n    │   │   └── Order.php\n    │   ├── <span class=\"dir\">Jobs/</span>\n    │   └── <span class=\"dir\">Services/</span>\n    ├── <span class=\"dir\">database/</span>\n    │   └── <span class=\"dir\">migrations/</span>\n    ├── <span class=\"dir\">routes/</span>\n    │   └── api.php\n    └── composer.json\n    <span class=\"dir\">packages/</span>shared/\n    └── <span class=\"dir\">types/</span>                       <span class=\"comment\"># TypeScript DTOs matching Laravel responses</span>\n        └── api.ts\n</div>",
         "fullWidth": true,
         "tier": "serious"
       },
       {
-        "title": "When Not To Use Astro",
+        "title": "Why This Combination Works",
+        "svgIcon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z\"/></svg>",
+        "contentHtml": "<p>Laravel is the most productive backend framework in existence — migrations, queues, mail, notifications, caching, and auth are all built-in. Nuxt gives Vue the SSR and DX it deserves. This stack has the fastest time-to-MVP of any fullstack pairing. Laravel's convention-over-configuration eliminates decision fatigue. Nuxt's auto-imports and file-based routing do the same on the frontend. The result: two opinionated frameworks that align philosophically.</p>",
+        "fullWidth": false,
+        "tier": "serious"
+      },
+      {
+        "title": "When Not To Use This Stack",
         "svgIcon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z\"/></svg>",
-        "contentHtml": "<p><strong>Don't use Astro when:</strong> Building a highly interactive SPA (dashboards, chat apps) — Next.js or React SPA is better. Most of your page requires JavaScript — Astro islands work best when JS is the exception. Need server-side auth with middleware — Astro's middleware is still maturing. Team needs a single framework for all components — Astro's multi-framework approach adds mental overhead.</p>",
+        "contentHtml": "<p><strong>Don't use Nuxt + Laravel when:</strong> Need high concurrency — PHP's request-per-process model isn't ideal for WebSocket-heavy apps. Team is TypeScript-only — mixing PHP with TS adds context-switching cost. Need strict type safety across the stack — Laravel is dynamically typed.</p>",
         "fullWidth": false,
         "tier": "serious"
       },
       {
         "title": "Complementary Stack",
         "svgIcon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><rect x=\"2\" y=\"3\" width=\"20\" height=\"14\" rx=\"2\" /><line x1=\"8\" y1=\"21\" x2=\"16\" y2=\"21\" /><line x1=\"12\" y1=\"17\" x2=\"12\" y2=\"21\" /></svg>",
-        "contentHtml": "<table class=\"fw-table\"><tr><th>Concern</th><th>Library</th></tr><tr><td>Content</td><td>Content Collections + MDX</td></tr><tr><td>Styling</td><td>Tailwind CSS / UnoCSS</td></tr><tr><td>React Islands</td><td>@astrojs/react</td></tr><tr><td>Vue Islands</td><td>@astrojs/vue</td></tr><tr><td>Solid Islands</td><td>@astrojs/solid-js</td></tr><tr><td>Svelte Islands</td><td>@astrojs/svelte</td></tr><tr><td>View Transitions</td><td>Astro View Transitions API</td></tr><tr><td>Deployment</td><td>@astrojs/cloudflare / @astrojs/vercel / @astrojs/netlify</td></tr></table>",
+        "contentHtml": "<table class=\"fw-table\"><tr><th>Concern</th><th>Library</th></tr><tr><td>Frontend</td><td>Nuxt 3 (Vue Composition API)</td></tr><tr><td>Backend</td><td>Laravel 11</td></tr><tr><td>Auth</td><td>Laravel Sanctum (SPA)</td></tr><tr><td>ORM</td><td>Eloquent</td></tr><tr><td>Queues</td><td>Laravel Queues + Horizon</td></tr><tr><td>Styling</td><td>Tailwind CSS / Nuxt UI</td></tr><tr><td>Testing</td><td>Pest (Laravel) + Vitest (Nuxt) + Playwright</td></tr><tr><td>Deploy</td><td>Laravel Forge / Vapor + Vercel/Netlify</td></tr></table>",
         "fullWidth": false,
         "tier": "all"
       }
     ]
   },
   {
-    "id": "tauri",
-    "cat": "desktop",
-    "name": "Tauri",
-    "icon": "TA",
-    "archBadge": "Rust Core + Frontend Shell + IPC Bridge",
+    "id": "react-go",
+    "cat": "fullstack",
+    "name": "React SPA + Go/Fiber",
+    "icon": "RG",
+    "archBadge": "Vite SPA + Package-by-Feature API",
     "blocks": [
-      {
-        "title": "Small Project Architecture",
-        "svgIcon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5\"/></svg>",
-        "contentHtml": "<p><strong>Tauri commands + frontend SPA in a single project.</strong> Use Tauri's command system with <code>#[tauri::command]</code> for Rust functions. Frontend in React/Vue/Svelte/Solid via Vite. IPC via <code>invoke()</code> in frontend. Tauri provides the native WebView shell — the frontend is your UI, Rust is your backend. Simple, secure, tiny binary (~5MB).</p>",
-        "fullWidth": false,
-        "tier": "small"
-      },
-      {
-        "title": "Small Project Directory Structure",
-        "svgIcon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z\"/></svg>",
-        "contentHtml": "<div class=\"fw-tree\">\n<span class=\"dir\">src-tauri/</span>\n├── Cargo.toml            <span class=\"comment\"># Rust dependencies</span>\n├── <span class=\"dir\">src/</span>\n│   ├── main.rs           <span class=\"comment\"># Entry + commands</span>\n│   └── lib.rs\n├── tauri.conf.json\n└── <span class=\"dir\">icons/</span>\n<span class=\"dir\">src/</span>                    <span class=\"comment\"># Frontend (Vite)</span>\n├── App.tsx\n├── main.tsx\n├── <span class=\"dir\">pages/</span>\n├── <span class=\"dir\">components/</span>\n└── <span class=\"dir\">hooks/</span>              <span class=\"comment\"># useInvoke for Tauri IPC</span>\n</div>",
-        "fullWidth": true,
-        "tier": "small"
-      },
       {
         "title": "Golden Standard Architecture",
         "svgIcon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5\"/></svg>",
-        "contentHtml": "<p><strong>Rust Core with Frontend Shell and Typed IPC Bridge.</strong> Tauri v2 splits the app into a Rust \"core process\" (filesystem, system tray, window management, native APIs) and a frontend WebView (any JS framework). Communication is via <code>#[tauri::command]</code> functions — Rust functions callable from the frontend via <code>invoke()</code>. The IPC layer is JSON-based but Tauri v2 adds typed channels. Compared to Electron: Tauri uses the OS's native WebView (WebKit on macOS/Linux, WebView2 on Windows) — no bundled Chromium (~3MB vs ~200MB binary).</p>",
+        "contentHtml": "<p><strong>React SPA (Vite) + Go/Fiber Package-by-Feature API.</strong> Vite serves the React SPA with HMR. Go/Fiber provides a high-performance JSON API with implicit interface DI. React handles the UI state (Zustand signals) and TanStack Query owns server cache. Go handles business logic, data access, and concurrency (goroutines). Communication via typed fetch client generated from Go's OpenAPI spec. This stack is built for performance: Go's throughput + React's ecosystem.</p>",
         "fullWidth": false,
         "tier": "serious"
       },
       {
-        "title": "Data & State Flow",
+        "title": "Data & Request Flow",
         "svgIcon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><polyline points=\"22 12 18 12 15 21 9 3 6 12 2 12\"/></svg>",
-        "contentHtml": "<ul><li><strong>Tauri Commands</strong> — <code>#[tauri::command] fn read_file(path: String) -&gt; Result&lt;String, String&gt;</code> — frontend calls <code>invoke('read_file', { path })</code></li><li><strong>Event system</strong> — <code>app.emit('event', payload)</code> (Rust → JS), <code>listen('event', callback)</code> (JS → Rust)</li><li><strong>Tauri State</strong> — <code>tauri::State&lt;T&gt;</code> for managed application state; injected automatically by Tauri</li><li><strong>Capabilities system (v2)</strong> — permission-based access control; each plugin (fs, shell, http, dialog) requires explicit allowlist</li><li><strong>Multi-window</strong> — <code>WebviewWindowBuilder</code> creates new windows; isolated browsing contexts per window</li><li><strong>Tauri Store</strong> — simple key-value persistent storage; read/write from Rust or JS</li></ul>",
+        "contentHtml": "<ul><li><strong>Browser (SPA) → Go API → DB</strong> — React fetches from Go via typed HTTP client; Go handles auth middleware, validation, service layer</li><li><strong>Go Package-by-Feature</strong> — each feature (auth, users, orders) is a Go package with handler.go, service.go, repository.go; interfaces defined at call site</li><li><strong>Zustand for UI state</strong> — global client state; TanStack Query for server state (cache, refetch, optimistic updates)</li><li><strong>Go's implicit interfaces</strong> — repository interfaces defined in the service package, not the repository package; PostgreSQL and mock implementations satisfy automatically</li><li><strong>OpenAPI contract</strong> — Go generates OpenAPI spec (swaggo/swag); openapi-typescript generates typed TS client for React</li></ul>",
         "fullWidth": false,
         "tier": "serious"
       },
       {
-        "title": "Directory Structure Blueprint",
+        "title": "Monorepo Directory Structure",
         "svgIcon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z\"/></svg>",
-        "contentHtml": "<div class=\"fw-tree\">\n    <span class=\"dir\">src-tauri/</span>\n    ├── Cargo.toml                     <span class=\"comment\"># Rust deps + tauri v2 config</span>\n    ├── <span class=\"dir\">src/</span>\n    │   ├── main.rs                    <span class=\"comment\"># fn main() { tauri::Builder::default()... }</span>\n    │   ├── lib.rs                     <span class=\"comment\"># Core setup: plugins, commands, menus</span>\n    │   ├── <span class=\"dir\">commands/</span>\n    │   │   ├── mod.rs\n    │   │   ├── file_commands.rs       <span class=\"comment\"># read_file, write_file, list_dir</span>\n    │   │   ├── system_commands.rs     <span class=\"comment\"># get_system_info, open_url</span>\n    │   │   └── db_commands.rs         <span class=\"comment\"># SQLite via rusqlite</span>\n    │   ├── <span class=\"dir\">state/</span>\n    │   │   └── app_state.rs           <span class=\"comment\"># Managed Tauri State</span>\n    │   ├── <span class=\"dir\">menu/</span>\n    │   │   └── app_menu.rs            <span class=\"comment\"># System tray + menu bar</span>\n    │   └── <span class=\"dir\">error/</span>\n    │       └── error.rs               <span class=\"comment\"># thiserror types</span>\n    ├── tauri.conf.json                <span class=\"comment\"># App config: window, bundle, plugins</span>\n    ├── <span class=\"dir\">capabilities/</span>                 <span class=\"comment\"># v2: permission scopes [default.json]</span>\n    └── <span class=\"dir\">icons/</span>\n    <span class=\"dir\">src/</span>                                <span class=\"comment\"># Frontend (React/Vue/Svelte/Solid + Vite)</span>\n    ├── main.tsx                       <span class=\"comment\"># Entry point</span>\n    ├── App.tsx                        <span class=\"comment\"># Root component + router</span>\n    ├── <span class=\"dir\">pages/</span>\n    │   ├── Dashboard.tsx\n    │   ├── Settings.tsx\n    │   └── Editor.tsx\n    ├── <span class=\"dir\">components/</span>\n    │   ├── <span class=\"dir\">layout/</span>\n    │   │   ├── Titlebar.tsx           <span class=\"comment\"># Custom titlebar (data-tauri-drag-region)</span>\n    │   │   └── Sidebar.tsx\n    │   └── <span class=\"dir\">ui/</span>\n    ├── <span class=\"dir\">lib/</span>\n    │   ├── tauri.ts                   <span class=\"comment\"># invoke() wrapper + typed commands</span>\n    │   └── stores.ts                  <span class=\"comment\"># Zustand/Pinia stores</span>\n    └── <span class=\"dir\">hooks/</span>\n        └── useTauriCommand.ts\n    ├── vite.config.ts\n    └── package.json\n</div>",
+        "contentHtml": "<div class=\"fw-tree\">\n    <span class=\"dir\">apps/</span>web/                            <span class=\"comment\"># React + Vite</span>\n    ├── <span class=\"dir\">src/</span>\n    │   ├── main.tsx                   <span class=\"comment\"># ReactDOM.createRoot</span>\n    │   ├── App.tsx                    <span class=\"comment\"># Router + providers</span>\n    │   ├── <span class=\"dir\">features/</span>\n    │   │   ├── <span class=\"dir\">auth/</span>\n    │   │   │   ├── LoginPage.tsx\n    │   │   │   ├── useAuth.ts\n    │   │   │   └── authStore.ts       <span class=\"comment\"># Zustand</span>\n    │   │   ├── <span class=\"dir\">dashboard/</span>\n    │   │   └── <span class=\"dir\">profile/</span>\n    │   ├── <span class=\"dir\">shared/</span>\n    │   │   ├── <span class=\"dir\">components/</span>\n    │   │   └── <span class=\"dir\">utils/</span>\n    │   └── <span class=\"dir\">lib/</span>\n    │       └── api-client.ts          <span class=\"comment\"># Generated from Go OpenAPI</span>\n    ├── vite.config.ts\n    └── package.json\n    <span class=\"dir\">apps/</span>api/                            <span class=\"comment\"># Go</span>\n    ├── <span class=\"dir\">cmd/</span>server/\n    │   └── main.go                    <span class=\"comment\"># Wire deps, start Fiber</span>\n    ├── <span class=\"dir\">internal/</span>\n    │   ├── <span class=\"dir\">auth/</span>\n    │   │   ├── handler.go\n    │   │   ├── service.go\n    │   │   ├── repository.go          <span class=\"comment\"># Interface</span>\n    │   │   ├── repository_postgres.go <span class=\"comment\"># Impl</span>\n    │   │   └── middleware.go\n    │   ├── <span class=\"dir\">user/</span>\n    │   ├── <span class=\"dir\">order/</span>\n    │   ├── <span class=\"dir\">common/</span>\n    │   │   └── <span class=\"dir\">middleware/</span>\n    │   └── <span class=\"dir\">infra/</span>\n    │       ├── <span class=\"dir\">database/</span>\n    │       └── <span class=\"dir\">config/</span>\n    ├── go.mod\n    └── go.sum\n    <span class=\"dir\">packages/</span>api-client/\n    └── <span class=\"dir\">src/</span>\n        └── index.ts                   <span class=\"comment\"># Typed TS client</span>\n</div>",
         "fullWidth": true,
         "tier": "serious"
       },
       {
-        "title": "When Not To Use Tauri",
+        "title": "Why This Combination Works",
+        "svgIcon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z\"/></svg>",
+        "contentHtml": "<p>Go's compile-time safety and performance complement React's UI expressiveness perfectly. Go compiles to a single binary — deploy is trivial. React's ecosystem (component libraries, state management, devtools) is unmatched. Go's goroutines handle concurrency at scale without the complexity of Node.js worker threads. This is the stack for teams that want React's frontend power with Go's backend reliability and speed.</p>",
+        "fullWidth": false,
+        "tier": "serious"
+      },
+      {
+        "title": "When Not To Use This Stack",
         "svgIcon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z\"/></svg>",
-        "contentHtml": "<p><strong>Don't use Tauri when:</strong> Need complex native UI widgets (TreeView, DataGrid, Ribbon) — Qt or .NET WPF is better. App must support Linux distributions older than Ubuntu 20.04 — WebKit dependency can be problematic. Team has zero Rust experience — Tauri's Rust core is mandatory for native features. Need the Electron ecosystem of npm packages that call Node.js APIs directly.</p>",
+        "contentHtml": "<p><strong>Don't use React + Go when:</strong> You need SSR/SEO — React SPA needs extra setup. Team has no Go experience — Node.js backends have lower barrier. Rapid prototyping with ORM-heavy patterns — Prisma/Drizzle with Node.js is more mature.</p>",
         "fullWidth": false,
         "tier": "serious"
       },
       {
         "title": "Complementary Stack",
         "svgIcon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><rect x=\"2\" y=\"3\" width=\"20\" height=\"14\" rx=\"2\" /><line x1=\"8\" y1=\"21\" x2=\"16\" y2=\"21\" /><line x1=\"12\" y1=\"17\" x2=\"12\" y2=\"21\" /></svg>",
-        "contentHtml": "<table class=\"fw-table\"><tr><th>Concern</th><th>Library</th></tr><tr><td>Frontend</td><td>React / Vue / Svelte / Solid + Vite</td></tr><tr><td>Native Core</td><td>Rust + Tauri v2</td></tr><tr><td>Database</td><td>rusqlite (SQLite) / SurrealDB</td></tr><tr><td>UI Framework</td><td>Tailwind CSS + shadcn/ui / Radix</td></tr><tr><td>IPC</td><td>Tauri Commands (typed invoke)</td></tr><tr><td>Auto Updates</td><td>Tauri Updater</td></tr><tr><td>Testing (Rust)</td><td>cargo test + tauri::test</td></tr><tr><td>Testing (Frontend)</td><td>Vitest + Playwright</td></tr><tr><td>Bundle Size</td><td>~3-5MB base (vs ~200MB Electron)</td></tr></table>",
+        "contentHtml": "<table class=\"fw-table\"><tr><th>Concern</th><th>Library</th></tr><tr><td>Frontend</td><td>React 19 + Vite</td></tr><tr><td>Backend</td><td>Go + Fiber v3</td></tr><tr><td>State (UI)</td><td>Zustand</td></tr><tr><td>State (Server)</td><td>TanStack Query v5</td></tr><tr><td>Router</td><td>React Router v7</td></tr><tr><td>ORM</td><td>sqlc (Go) / Drizzle (TS)</td></tr><tr><td>API Contract</td><td>swaggo → openapi-typescript</td></tr><tr><td>Testing</td><td>Vitest + Playwright (FE) + testify (Go)</td></tr><tr><td>Deploy</td><td>Single Go binary + static S3/CloudFront</td></tr></table>",
         "fullWidth": false,
         "tier": "all"
       }
     ]
   },
   {
-    "id": "htmx",
-    "cat": "frontend",
-    "name": "htmx",
-    "icon": "HX",
-    "archBadge": "HATEOAS Hypermedia-Driven Architecture",
+    "id": "angular-dotnet",
+    "cat": "fullstack",
+    "name": "Angular + .NET Core",
+    "icon": "AD",
+    "archBadge": "Signals + Clean Architecture + CQRS/MediatR",
     "blocks": [
-      {
-        "title": "Small Project Architecture",
-        "svgIcon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5\"/></svg>",
-        "contentHtml": "<p><strong>Server-rendered HTML + htmx attributes in templates.</strong> Use any backend (Django, Rails, Express, Go) to render HTML fragments. Add htmx attributes (<code>hx-get</code>, <code>hx-post</code>, <code>hx-swap</code>) to existing HTML for AJAX without writing JavaScript. No frontend build step, no SPA framework, no JSON APIs for internal use. The server is the single source of truth.</p>",
-        "fullWidth": false,
-        "tier": "small"
-      },
-      {
-        "title": "Small Project Directory Structure",
-        "svgIcon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z\"/></svg>",
-        "contentHtml": "<div class=\"fw-tree\">\n<span class=\"dir\">templates/</span>              <span class=\"comment\"># Server-rendered HTML</span>\n├── base.html              <span class=\"comment\"># Layout + htmx script</span>\n├── <span class=\"dir\">pages/</span>\n│   ├── index.html\n│   ├── login.html\n│   └── dashboard.html\n├── <span class=\"dir\">partials/</span>            <span class=\"comment\"># HTMX fragment responses</span>\n│   ├── user_list.html\n│   └── search_results.html\n└── <span class=\"dir\">components/</span>          <span class=\"comment\"># Reusable template blocks</span>\n<span class=\"dir\">routes/</span>                   <span class=\"comment\"># Server routes (handle both full pages + partials)</span>\n├── auth.js\n├── dashboard.js\n└── api/search.js\n</div>",
-        "fullWidth": true,
-        "tier": "small"
-      },
       {
         "title": "Golden Standard Architecture",
         "svgIcon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5\"/></svg>",
-        "contentHtml": "<p><strong>HATEOAS Hypermedia-Driven Architecture with Server-Side State.</strong> htmx extends HTML with attributes that enable any element to make HTTP requests and swap the response into the DOM. The server returns HTML fragments (not JSON), following REST's original HATEOAS constraint. State lives entirely on the server — the client is a thin hypermedia renderer. Combined with a backend that renders templates (Django, Rails, Go templates, JSX on server), you get SPA-like interactivity with no frontend build pipeline.</p>",
+        "contentHtml": "<p><strong>The enterprise standard.</strong> Angular's opinionated architecture (modules, services, DI, signals) aligns naturally with .NET's Clean Architecture and MediatR CQRS. Both use dependency injection natively. Both enforce strong typing. Both have mature testing ecosystems. Angular Signals mesh with .NET's observable patterns. Communication via typed HttpClient services consuming ASP.NET's Swagger-generated API. This is the most structured fullstack pairing available — both frameworks enforce architecture rather than just enabling it.</p>",
         "fullWidth": false,
         "tier": "serious"
       },
       {
-        "title": "Data & State Flow",
+        "title": "Data & Request Flow",
         "svgIcon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><polyline points=\"22 12 18 12 15 21 9 3 6 12 2 12\"/></svg>",
-        "contentHtml": "<ul><li><strong>Hypermedia as Engine of Application State (HATEOAS)</strong> — the server sends HTML with embedded links and actions; the client only knows what the server tells it</li><li><strong>AJAX attributes</strong> — <code>hx-get</code>, <code>hx-post</code>, <code>hx-put</code>, <code>hx-delete</code> on any element; <code>hx-trigger</code> controls event (click, input, reveal, every 2s)</li><li><strong>DOM swapping</strong> — <code>hx-swap</code> (innerHTML, outerHTML, beforeend, afterbegin); <code>hx-target</code> with CSS selector; CSS transitions on swap</li><li><strong>Out-of-band swaps</strong> — server response can update multiple DOM locations via <code>hx-swap-oob</code></li><li><strong>Server state</strong> — no client-side store needed; server sends exactly the HTML needed for current state</li><li><strong>Hyperscript</strong> — companion scripting language for htmx; <code>_=\"on click add .active\"</code> syntax</li></ul>",
+        "contentHtml": "<ul><li><strong>Browser (Angular SPA) → .NET API → DB</strong> — typed HttpClient services in Angular call .NET endpoints</li><li><strong>.NET Clean Architecture Layers:</strong> API (Controllers) → Application (MediatR handlers + DTOs) → Domain (Entities + Value Objects) → Infrastructure (EF Core + external services)</li><li><strong>Angular Signal-Based State:</strong> <code>signal()</code> for local, <code>linkedSignal()</code> for derived, <code>resource()</code> for async data with built-in loading/error states</li><li><strong>CQRS with MediatR</strong> — Commands (mutations) and Queries (reads) are separated into handlers; no shared state</li><li><strong>EF Core</strong> — LINQ-based ORM with migrations, change tracking, and compiled queries for performance</li><li><strong>Angular Interceptors</strong> — attach JWT tokens, handle 401 refresh, transform errors — same pattern as .NET middleware</li></ul>",
         "fullWidth": false,
         "tier": "serious"
       },
       {
-        "title": "Directory Structure Blueprint",
+        "title": "Monorepo Directory Structure",
         "svgIcon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z\"/></svg>",
-        "contentHtml": "<div class=\"fw-tree\">\n    <span class=\"dir\">templates/</span>\n    ├── layout.html                    <span class=\"comment\"># Base layout: &lt;script src=\"htmx\"&gt; + nav</span>\n    ├── <span class=\"dir\">pages/</span>\n    │   ├── index.html                 <span class=\"comment\"># Full page</span>\n    │   ├── login.html\n    │   └── dashboard.html\n    ├── <span class=\"dir\">partials/</span>                   <span class=\"comment\"># HTMX fragment responses (not full pages)</span>\n    │   ├── <span class=\"dir\">users/</span>\n    │   │   ├── user_table_rows.html   <span class=\"comment\"># &lt;tbody hx-swap-oob&gt;</span>\n    │   │   ├── user_form.html         <span class=\"comment\"># Inline edit form</span>\n    │   │   └── user_card.html\n    │   ├── <span class=\"dir\">search/</span>\n    │   │   └── results.html           <span class=\"comment\"># &lt;ul id=\"search-results\"&gt;</span>\n    │   └── <span class=\"dir\">notifications/</span>\n    │       └── toast.html             <span class=\"comment\"># hx-swap-oob=\"#toast-container\"</span>\n    └── <span class=\"dir\">components/</span>\n        ├── table.html                 <span class=\"comment\"># Reusable sortable table</span>\n        └── modal.html                 <span class=\"comment\"># hx-trigger on any element</span>\n    <span class=\"dir\">handlers/</span>                        <span class=\"comment\"># Route handlers (Go/Express/Django/Flask)</span>\n    ├── auth.go / auth.js / auth.py\n    ├── dashboard.go / dashboard.js / dashboard.py\n    └── search.go / search.js / search.py\n    <span class=\"dir\">static/</span>\n    ├── htmx.min.js                    <span class=\"comment\"># ~14KB gzipped (no build step)</span>\n    ├── hyperscript.min.js             <span class=\"comment\"># Optional companion</span>\n    └── style.css\n</div>",
+        "contentHtml": "<div class=\"fw-tree\">\n    <span class=\"dir\">apps/</span>web/                            <span class=\"comment\"># Angular</span>\n    ├── <span class=\"dir\">src/</span>\n    │   ├── main.ts\n    │   ├── <span class=\"dir\">app/</span>\n    │   │   ├── app.config.ts          <span class=\"comment\"># Providers, DI, router</span>\n    │   │   ├── app.routes.ts\n    │   │   ├── <span class=\"dir\">features/</span>\n    │   │   │   ├── <span class=\"dir\">auth/</span>\n    │   │   │   │   ├── login/\n    │   │   │   │   ├── register/\n    │   │   │   │   └── auth.service.ts\n    │   │   │   ├── <span class=\"dir\">dashboard/</span>\n    │   │   │   └── <span class=\"dir\">users/</span>\n    │   │   ├── <span class=\"dir\">core/</span>\n    │   │   │   ├── <span class=\"dir\">interceptors/</span>\n    │   │   │   ├── <span class=\"dir\">guards/</span>\n    │   │   │   └── <span class=\"dir\">services/</span>\n    │   │   └── <span class=\"dir\">shared/</span>\n    │   └── environments/\n    ├── angular.json\n    └── package.json\n    <span class=\"dir\">apps/</span>api/                            <span class=\"comment\"># .NET</span>\n    ├── <span class=\"dir\">src/</span>\n    │   ├── <span class=\"dir\">API/</span>                        <span class=\"comment\"># Controllers + middleware</span>\n    │   │   ├── Controllers/\n    │   │   ├── Middleware/\n    │   │   └── Program.cs\n    │   ├── <span class=\"dir\">Application/</span>                <span class=\"comment\"># MediatR handlers + DTOs</span>\n    │   │   ├── <span class=\"dir\">Auth/</span>\n    │   │   │   ├── Commands/\n    │   │   │   │   └── LoginCommand.cs\n    │   │   │   └── Queries/\n    │   │   ├── <span class=\"dir\">Users/</span>\n    │   │   └── <span class=\"dir\">Common/</span>\n    │   │       └── Behaviors/         <span class=\"comment\"># Validation, logging pipelines</span>\n    │   ├── <span class=\"dir\">Domain/</span>                    <span class=\"comment\"># Entities + Value Objects</span>\n    │   │   ├── <span class=\"dir\">Entities/</span>\n    │   │   └── <span class=\"dir\">Enums/</span>\n    │   └── <span class=\"dir\">Infrastructure/</span>            <span class=\"comment\"># EF Core + external services</span>\n    │       ├── <span class=\"dir\">Persistence/</span>\n    │       │   ├── AppDbContext.cs\n    │       │   └── <span class=\"dir\">Migrations/</span>\n    │       └── <span class=\"dir\">Services/</span>\n    ├── API.csproj\n    └── appsettings.json\n    <span class=\"dir\">packages/</span>shared/\n    └── <span class=\"dir\">contracts/</span>                   <span class=\"comment\"># DTOs, enums (source of truth)</span>\n        └── ApiModels.cs\n</div>",
         "fullWidth": true,
         "tier": "serious"
       },
       {
-        "title": "When Not To Use htmx",
+        "title": "Why This Combination Works",
+        "svgIcon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z\"/></svg>",
+        "contentHtml": "<p>Angular and .NET share the same architectural philosophy: opinionated, structured, enterprise-grade. Both enforce DI. Both use strong typing. Both have first-class testing. The MediatR pipeline pattern (validation → handler → response) maps directly to Angular's interceptor → service → component flow. For enterprise teams building line-of-business applications, this is the most predictable, maintainable, and AI-agent-navigable fullstack pairing.</p>",
+        "fullWidth": false,
+        "tier": "serious"
+      },
+      {
+        "title": "When Not To Use This Stack",
         "svgIcon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z\"/></svg>",
-        "contentHtml": "<p><strong>Don't use htmx when:</strong> Building highly interactive client-side apps (spreadsheets, drawing tools, real-time multiplayer) — SPA frameworks are better. Need offline-first PWAs with client-side data — htmx requires a server connection. Team is purely frontend-focused with no server-side template engine. UX requires complex client-side state machines with optimistic updates.</p>",
+        "contentHtml": "<p><strong>Don't use Angular + .NET when:</strong> Startup/small team — ceremony outweighs value. Rapid prototyping — Nuxt + Laravel or Next.js + Express ship faster. Need simple deployment — Go compiles to single binary. Team resists C# or enterprise patterns.</p>",
         "fullWidth": false,
         "tier": "serious"
       },
       {
         "title": "Complementary Stack",
         "svgIcon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><rect x=\"2\" y=\"3\" width=\"20\" height=\"14\" rx=\"2\" /><line x1=\"8\" y1=\"21\" x2=\"16\" y2=\"21\" /><line x1=\"12\" y1=\"17\" x2=\"12\" y2=\"21\" /></svg>",
-        "contentHtml": "<table class=\"fw-table\"><tr><th>Concern</th><th>Library</th></tr><tr><td>Hypermedia</td><td>htmx v2 (~14KB gzipped)</td></tr><tr><td>Backend</td><td>Any (Django, Rails, Go, Express, Phoenix)</td></tr><tr><td>Template Engine</td><td>Jinja2 / ERB / Go templates / JSX (server)</td></tr><tr><td>Companion</td><td>Hyperscript (optional, for client-side one-liners)</td></tr><tr><td>CSS</td><td>Tailwind CSS / Pico CSS / Bootstrap</td></tr><tr><td>WebSocket</td><td>htmx WebSocket extension</td></tr><tr><td>SSE</td><td>htmx SSE extension</td></tr><tr><td>Testing</td><td>Server-side tests (no JS testing needed)</td></tr></table>",
+        "contentHtml": "<table class=\"fw-table\"><tr><th>Concern</th><th>Library</th></tr><tr><td>Frontend</td><td>Angular 19 (Signals + standalone)</td></tr><tr><td>Backend</td><td>ASP.NET Core 9</td></tr><tr><td>CQRS</td><td>MediatR</td></tr><tr><td>ORM</td><td>Entity Framework Core 9</td></tr><tr><td>Validation</td><td>FluentValidation</td></tr><tr><td>Mapping</td><td>AutoMapper / Mapster</td></tr><tr><td>Auth</td><td>ASP.NET Identity + JWT</td></tr><tr><td>API Docs</td><td>Swashbuckle (Swagger)</td></tr><tr><td>Testing</td><td>xUnit + Moq + Jasmine/Karma</td></tr><tr><td>Deploy</td><td>Azure / IIS / Docker</td></tr></table>",
         "fullWidth": false,
         "tier": "all"
       }
     ]
   },
   {
-    "id": "lit",
-    "cat": "frontend",
-    "name": "Lit / Web Components",
-    "icon": "LT",
-    "archBadge": "ReactiveElement + Web Component Lifecycle",
+    "id": "remix-hono",
+    "cat": "fullstack",
+    "name": "Remix + Hono",
+    "icon": "RH",
+    "archBadge": "Progressive Enhancement + Edge-First API",
     "blocks": [
-      {
-        "title": "Small Project Architecture",
-        "svgIcon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5\"/></svg>",
-        "contentHtml": "<p><strong>Lit components + Vite in a flat project.</strong> Use Lit's <code>@customElement</code> decorator with <code>html</code> tagged templates. Each component is a native HTML custom element — framework-agnostic and reusable anywhere. Reactive properties via <code>@property()</code> and <code>@state()</code>. Vite for build. No framework runtime beyond the ~5KB Lit core.</p>",
-        "fullWidth": false,
-        "tier": "small"
-      },
-      {
-        "title": "Small Project Directory Structure",
-        "svgIcon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z\"/></svg>",
-        "contentHtml": "<div class=\"fw-tree\">\n<span class=\"dir\">src/</span>\n├── index.html             <span class=\"comment\"># Entry HTML</span>\n├── <span class=\"dir\">components/</span>\n│   ├── app-root.ts\n│   ├── nav-bar.ts\n│   ├── <span class=\"dir\">pages/</span>\n│   │   ├── home-page.ts\n│   │   ├── login-page.ts\n│   │   └── profile-page.ts\n│   └── <span class=\"dir\">shared/</span>\n│       ├── button.ts\n│       └── input.ts\n├── <span class=\"dir\">services/</span>             <span class=\"comment\"># API + auth</span>\n└── <span class=\"dir\">styles/</span>               <span class=\"comment\"># Shared CSS</span>\n</div>",
-        "fullWidth": true,
-        "tier": "small"
-      },
       {
         "title": "Golden Standard Architecture",
         "svgIcon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5\"/></svg>",
-        "contentHtml": "<p><strong>ReactiveElement with Web Component Lifecycle and Standards-Based Design.</strong> Lit extends <code>HTMLElement</code> via <code>ReactiveElement</code> — every Lit component is a real HTML custom element (not a virtual DOM abstraction). Lit's <code>html</code> tagged template literals use tagged template caching for efficient updates — only changed bindings re-render, not the entire template. Shadow DOM provides style encapsulation without CSS-in-JS. Components work in any framework or vanilla HTML.</p>",
+        "contentHtml": "<p><strong>Edge-first fullstack with progressive enhancement.</strong> Remix handles SSR, nested routing, loaders/actions, and progressive enhancement — forms work without JS. Hono provides a lightning-fast API layer that runs on Cloudflare Workers, Deno, Bun, or Node.js. Hono's RPC client (<code>hc</code>) gives end-to-end type safety without code generation. This stack is built for the edge: both frameworks minimize bundle size, optimize cold starts, and embrace Web Standards (Request/Response).</p>",
         "fullWidth": false,
         "tier": "serious"
       },
       {
-        "title": "Data & State Flow",
+        "title": "Data & Request Flow",
         "svgIcon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><polyline points=\"22 12 18 12 15 21 9 3 6 12 2 12\"/></svg>",
-        "contentHtml": "<ul><li><strong>Reactive properties</strong> — <code>@property()</code> (public, HTML attribute ↔ JS property sync), <code>@state()</code> (internal, triggers re-render on change)</li><li><strong>Tagged template literals</strong> — <code>html`&lt;span&gt;${this.name}&lt;/span&gt;`</code>; Lit tracks which bindings changed and only updates those DOM nodes</li><li><strong>Web Component lifecycle</strong> — <code>connectedCallback()</code>, <code>disconnectedCallback()</code>, <code>willUpdate()</code>, <code>firstUpdated()</code> (access rendered DOM)</li><li><strong>Shadow DOM</strong> — <code>&lt;slot&gt;</code> for composition; <code>:host</code> for host styling; encapsulated CSS with <code>static styles = css`...`</code></li><li><strong>Context protocol</strong> — <code>@consume({context})</code> / <code>@provide({context})</code> for dependency injection up the DOM tree</li><li><strong>No virtual DOM</strong> — Lit updates the real DOM directly; this is a ~5KB abstraction, not a rendering engine</li></ul>",
+        "contentHtml": "<ul><li><strong>Browser → Remix Loader → Hono API → DB</strong> — Remix loaders call Hono via typed RPC client; data flows through nested routes</li><li><strong>Browser → Remix Form → Action → Hono API → DB</strong> — native HTML forms, Remix actions call Hono for mutations</li><li><strong>Hono RPC Client</strong> — <code>client.api.users[':id'].$get({ param: { id: '123' } })</code> — fully typed without code generation</li><li><strong>Edge deployment</strong> — both run on Cloudflare Workers with near-zero cold start; Hono's Zod middleware validates at the edge</li><li><strong>No client-side state for server data</strong> — Remix revalidates loaders after mutations; no Redux/Zustand needed</li></ul>",
         "fullWidth": false,
         "tier": "serious"
       },
       {
-        "title": "Directory Structure Blueprint",
+        "title": "Monorepo Directory Structure",
         "svgIcon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z\"/></svg>",
-        "contentHtml": "<div class=\"fw-tree\">\n    <span class=\"dir\">src/</span>\n    ├── index.html                     <span class=\"comment\"># &lt;app-root&gt;&lt;/app-root&gt;</span>\n    ├── <span class=\"dir\">components/</span>\n    │   ├── <span class=\"dir\">app/</span>\n    │   │   ├── app-root.ts            <span class=\"comment\"># @customElement('app-root')</span>\n    │   │   ├── app-router.ts          <span class=\"comment\"># Simple hash/query router</span>\n    │   │   └── app-shell.ts\n    │   ├── <span class=\"dir\">pages/</span>\n    │   │   ├── home-page.ts\n    │   │   ├── login-page.ts\n    │   │   ├── dashboard-page.ts\n    │   │   └── settings-page.ts\n    │   ├── <span class=\"dir\">ui/</span>\n    │   │   ├── button.ts              <span class=\"comment\"># &lt;ui-button&gt;</span>\n    │   │   ├── input.ts               <span class=\"comment\"># &lt;ui-input&gt;</span>\n    │   │   ├── data-table.ts\n    │   │   ├── dialog.ts\n    │   │   └── toast.ts\n    │   └── <span class=\"dir\">layout/</span>\n    │       ├── app-header.ts\n    │       ├── app-sidebar.ts\n    │       └── app-footer.ts\n    ├── <span class=\"dir\">context/</span>\n    │   ├── auth-context.ts            <span class=\"comment\"># createContext&lt;AuthState&gt;()</span>\n    │   ├── theme-context.ts\n    │   └── router-context.ts\n    ├── <span class=\"dir\">services/</span>\n    │   ├── api-service.ts             <span class=\"comment\"># Fetch wrapper</span>\n    │   ├── auth-service.ts\n    │   └── storage-service.ts         <span class=\"comment\"># localStorage abstraction</span>\n    ├── <span class=\"dir\">styles/</span>\n    │   ├── tokens.css                 <span class=\"comment\"># CSS custom properties (design tokens)</span>\n    │   ├── reset.css\n    │   └── typography.css\n    └── <span class=\"dir\">utils/</span>\n        └── router.ts                  <span class=\"comment\"># Client-side router utility</span>\n    ├── vite.config.ts\n    └── package.json\n</div>",
+        "contentHtml": "<div class=\"fw-tree\">\n    <span class=\"dir\">apps/</span>web/                            <span class=\"comment\"># Remix</span>\n    ├── <span class=\"dir\">app/</span>\n    │   ├── root.tsx                   <span class=\"comment\"># Root layout + meta</span>\n    │   ├── <span class=\"dir\">routes/</span>\n    │   │   ├── _index.tsx\n    │   │   ├── _auth.login.tsx\n    │   │   ├── _dashboard.tsx\n    │   │   └── _dashboard.settings.tsx\n    │   ├── <span class=\"dir\">components/</span>\n    │   └── <span class=\"dir\">services/</span>\n    │       └── api.server.ts          <span class=\"comment\"># Hono RPC client</span>\n    └── package.json\n    <span class=\"dir\">apps/</span>api/                            <span class=\"comment\"># Hono</span>\n    ├── <span class=\"dir\">src/</span>\n    │   ├── index.ts                   <span class=\"comment\"># Hono app + RPC type export</span>\n    │   ├── <span class=\"dir\">routes/</span>\n    │   │   ├── auth.ts\n    │   │   ├── users.ts\n    │   │   └── index.ts               <span class=\"comment\"># Route aggregation</span>\n    │   ├── <span class=\"dir\">middleware/</span>\n    │   │   ├── auth.ts\n    │   │   └── cors.ts\n    │   ├── <span class=\"dir\">validators/</span>              <span class=\"comment\"># Zod schemas</span>\n    │   └── <span class=\"dir\">db/</span>\n    │       └── schema.ts              <span class=\"comment\"># Drizzle schema</span>\n    ├── wrangler.toml\n    └── package.json\n    <span class=\"dir\">packages/</span>shared/\n    └── <span class=\"dir\">src/</span>\n        └── types.ts                   <span class=\"comment\"># Shared Zod schemas</span>\n</div>",
         "fullWidth": true,
         "tier": "serious"
       },
       {
-        "title": "When Not To Use Lit",
+        "title": "Why This Combination Works",
+        "svgIcon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z\"/></svg>",
+        "contentHtml": "<p>Both Remix and Hono are built on Web Standards (Request/Response). Hono's RPC client eliminates the API contract drift problem without code generation — the types flow directly from the Hono app definition. Both deploy to the edge (Cloudflare Workers) with sub-millisecond cold starts. Remix's progressive enhancement means your app works before JavaScript loads. This is the most modern, standards-compliant fullstack pairing.</p>",
+        "fullWidth": false,
+        "tier": "serious"
+      },
+      {
+        "title": "When Not To Use This Stack",
         "svgIcon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z\"/></svg>",
-        "contentHtml": "<p><strong>Don't use Lit when:</strong> Building a complex SPA with routing, SSR, and code splitting — Next.js/Nuxt/SvelteKit are more complete. Team expects React-like ecosystem — Lit's ecosystem is smaller. Need mature SSR with hydration — Lit SSR is limited compared to React/Vue. Team is inexperienced with Web Component APIs and Shadow DOM.</p>",
+        "contentHtml": "<p><strong>Don't use Remix + Hono when:</strong> Need complex client-side state — Remix intentionally minimizes it. Need large React ecosystem — Remix is smaller than Next.js. Need WebSocket at scale — Cloudflare Workers have limitations. Team is new to Web Standards patterns.</p>",
         "fullWidth": false,
         "tier": "serious"
       },
       {
         "title": "Complementary Stack",
         "svgIcon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><rect x=\"2\" y=\"3\" width=\"20\" height=\"14\" rx=\"2\" /><line x1=\"8\" y1=\"21\" x2=\"16\" y2=\"21\" /><line x1=\"12\" y1=\"17\" x2=\"12\" y2=\"21\" /></svg>",
-        "contentHtml": "<table class=\"fw-table\"><tr><th>Concern</th><th>Library</th></tr><tr><td>Core</td><td>Lit (~5KB)</td></tr><tr><td>Build</td><td>Vite + @lit/vite-ssr</td></tr><tr><td>Routing</td><td>@lit/router or custom</td></tr><tr><td>State</td><td>@lit/context + @lit/task</td></tr><tr><td>Styling</td><td>Shadow DOM + CSS custom properties</td></tr><tr><td>SSR</td><td>@lit/vite-ssr + @lit/ssr</td></tr><tr><td>Component Lib</td><td>Shoelace / Spectrum Web Components</td></tr><tr><td>Testing</td><td>@open-wc/testing + Web Test Runner</td></tr></table>",
+        "contentHtml": "<table class=\"fw-table\"><tr><th>Concern</th><th>Library</th></tr><tr><td>Frontend</td><td>Remix (React Router v7)</td></tr><tr><td>Backend</td><td>Hono (Cloudflare Workers)</td></tr><tr><td>Type Safety</td><td>Hono RPC Client (hc)</td></tr><tr><td>Validation</td><td>Zod (shared)</td></tr><tr><td>ORM</td><td>Drizzle ORM (edge-ready)</td></tr><tr><td>Auth</td><td>Better Auth / Lucia Auth</td></tr><tr><td>Styling</td><td>Tailwind CSS</td></tr><tr><td>Testing</td><td>Vitest + Playwright</td></tr><tr><td>Deploy</td><td>Cloudflare Workers + Pages</td></tr></table>",
         "fullWidth": false,
         "tier": "all"
       }
     ]
-  }
+  },
+  {
+    "id": "sveltekit-go",
+    "cat": "fullstack",
+    "name": "SvelteKit + Go/Fiber",
+    "icon": "SG",
+    "archBadge": "Compile-Time SSR + High-Performance API",
+    "blocks": [
+      {
+        "title": "Golden Standard Architecture",
+        "svgIcon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5\"/></svg>",
+        "contentHtml": "<p><strong>The performance-obsessed fullstack.</strong> SvelteKit compiles to vanilla JS with zero runtime overhead. Go compiles to a single native binary with goroutines for concurrency. Together, they're the most performant fullstack pairing by raw metrics. SvelteKit handles SSR and form actions. Go/Fiber provides a high-throughput API with sub-millisecond response times. This stack is ideal for latency-sensitive applications where every millisecond counts.</p>",
+        "fullWidth": false,
+        "tier": "serious"
+      },
+      {
+        "title": "Data & Request Flow",
+        "svgIcon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><polyline points=\"22 12 18 12 15 21 9 3 6 12 2 12\"/></svg>",
+        "contentHtml": "<ul><li><strong>Browser → SvelteKit SSR → Go API → DB</strong> — SvelteKit load functions call Go endpoints; server-rendered HTML with zero JS overhead</li><li><strong>Go's implicit interfaces</strong> — consumer-side interfaces defined in each feature package; PostgreSQL, Redis, and mock implementations satisfy automatically</li><li><strong>SvelteKit form actions</strong> — progressive enhancement; forms work before JS loads; Go handles the actual mutation</li><li><strong>Go goroutines</strong> — handle thousands of concurrent requests without thread pooling; channel-based communication for coordination</li><li><strong>Shared types via OpenAPI</strong> — Go generates spec; openapi-typescript generates typed SvelteKit client</li></ul>",
+        "fullWidth": false,
+        "tier": "serious"
+      },
+      {
+        "title": "Monorepo Directory Structure",
+        "svgIcon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z\"/></svg>",
+        "contentHtml": "<div class=\"fw-tree\">\n    <span class=\"dir\">apps/</span>web/                            <span class=\"comment\"># SvelteKit</span>\n    ├── <span class=\"dir\">src/</span>\n    │   ├── app.html\n    │   ├── hooks.server.ts            <span class=\"comment\"># Auth, Go API client init</span>\n    │   ├── <span class=\"dir\">routes/</span>\n    │   │   ├── +layout.svelte\n    │   │   ├── +page.svelte\n    │   │   ├── +page.server.ts        <span class=\"comment\"># Load: fetch Go API</span>\n    │   │   ├── <span class=\"dir\">auth/</span>\n    │   │   └── <span class=\"dir\">dashboard/</span>\n    │   └── <span class=\"dir\">lib/</span>\n    │       ├── api-client.ts          <span class=\"comment\"># Generated typed client</span>\n    │       └── <span class=\"dir\">components/</span>\n    ├── svelte.config.js\n    └── package.json\n    <span class=\"dir\">apps/</span>api/                            <span class=\"comment\"># Go</span>\n    ├── <span class=\"dir\">cmd/</span>server/\n    │   └── main.go                    <span class=\"comment\"># Wire deps, Fiber start</span>\n    ├── <span class=\"dir\">internal/</span>\n    │   ├── <span class=\"dir\">auth/</span>\n    │   │   ├── handler.go\n    │   │   ├── service.go\n    │   │   └── repository.go\n    │   ├── <span class=\"dir\">user/</span>\n    │   ├── <span class=\"dir\">common/</span>\n    │   └── <span class=\"dir\">infra/</span>\n    └── go.mod\n    <span class=\"dir\">packages/</span>api-client/\n    └── <span class=\"dir\">src/</span>index.ts\n</div>",
+        "fullWidth": true,
+        "tier": "serious"
+      },
+      {
+        "title": "Why This Combination Works",
+        "svgIcon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z\"/></svg>",
+        "contentHtml": "<p>SvelteKit and Go share a philosophy: compile-time safety, minimal runtime, maximum performance. Svelte's compiler eliminates the Virtual DOM. Go's compiler eliminates the JIT. The result is the fastest possible fullstack: compiled JavaScript on the frontend, compiled native binary on the backend. Both prioritize simplicity over ceremony. For performance-critical applications (dashboards, real-time analytics, trading UIs), this pairing has no equal.</p>",
+        "fullWidth": false,
+        "tier": "serious"
+      },
+      {
+        "title": "When Not To Use This Stack",
+        "svgIcon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z\"/></svg>",
+        "contentHtml": "<p><strong>Don't use SvelteKit + Go when:</strong> Need rich ORM features — Prisma/Drizzle with Node.js is more mature. Team has no Go experience — single-language stack has lower friction. Need massive npm ecosystem — React/Vue have larger communities.</p>",
+        "fullWidth": false,
+        "tier": "serious"
+      },
+      {
+        "title": "Complementary Stack",
+        "svgIcon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><rect x=\"2\" y=\"3\" width=\"20\" height=\"14\" rx=\"2\" /><line x1=\"8\" y1=\"21\" x2=\"16\" y2=\"21\" /><line x1=\"12\" y1=\"17\" x2=\"12\" y2=\"21\" /></svg>",
+        "contentHtml": "<table class=\"fw-table\"><tr><th>Concern</th><th>Library</th></tr><tr><td>Frontend</td><td>SvelteKit (Svelte 5 Runes)</td></tr><tr><td>Backend</td><td>Go + Fiber v3</td></tr><tr><td>ORM</td><td>sqlc (Go) / Drizzle (TS client)</td></tr><tr><td>Auth</td><td>Lucia Auth + golang-jwt</td></tr><tr><td>Validation</td><td>Zod (FE) + go-playground/validator (BE)</td></tr><tr><td>API Contract</td><td>swaggo → openapi-typescript</td></tr><tr><td>Testing</td><td>Vitest + Playwright (FE) + testify (Go)</td></tr><tr><td>Deploy</td><td>Single Go binary + static SvelteKit export</td></tr></table>",
+        "fullWidth": false,
+        "tier": "all"
+      }
+    ]
+  },
+  {
+    "id": "astro-express",
+    "cat": "fullstack",
+    "name": "Astro + Express",
+    "icon": "AE",
+    "archBadge": "Content-First Islands + 3-Tier API",
+    "blocks": [
+      {
+        "title": "Golden Standard Architecture",
+        "svgIcon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5\"/></svg>",
+        "contentHtml": "<p><strong>Content-first architecture with interactive islands.</strong> Astro renders static HTML by default — zero JS shipped unless explicitly opted in via islands (React, Svelte, Vue components). Express provides the JSON API for dynamic data and interactive islands. Astro handles content collections, Markdown/MDX, and SSG/SSR hybrid rendering. Express handles auth, business logic, and database access. This is the stack for content-heavy sites (marketing, docs, blogs, e-commerce) that need dynamic features without SPA overhead.</p>",
+        "fullWidth": false,
+        "tier": "serious"
+      },
+      {
+        "title": "Data & Request Flow",
+        "svgIcon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><polyline points=\"22 12 18 12 15 21 9 3 6 12 2 12\"/></svg>",
+        "contentHtml": "<ul><li><strong>Browser → Astro SSG/SSR → Static HTML</strong> — content pages are pre-rendered; near-instant load with zero JS</li><li><strong>Browser → Astro Island → Express API → DB</strong> — interactive components (React/Svelte/Vue) fetch from Express; JS only loads for islands</li><li><strong>Astro Content Collections</strong> — type-safe Markdown/MDX with Zod schemas; built-in pagination, tags, RSS</li><li><strong>Express 3-Tier API</strong> — dedicated backend for auth, payments, user data; islands call it directly</li><li><strong>Hybrid rendering</strong> — Astro can SSR specific routes (dashboard, account) while SSG the rest (blog, landing pages)</li></ul>",
+        "fullWidth": false,
+        "tier": "serious"
+      },
+      {
+        "title": "Monorepo Directory Structure",
+        "svgIcon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z\"/></svg>",
+        "contentHtml": "<div class=\"fw-tree\">\n    <span class=\"dir\">apps/</span>web/                            <span class=\"comment\"># Astro</span>\n    ├── <span class=\"dir\">src/</span>\n    │   ├── <span class=\"dir\">pages/</span>\n    │   │   ├── index.astro\n    │   │   ├── blog/[...slug].astro\n    │   │   ├── dashboard.astro        <span class=\"comment\"># SSR: on-demand</span>\n    │   │   └── login.astro\n    │   ├── <span class=\"dir\">content/</span>\n    │   │   └── <span class=\"dir\">blog/</span>                  <span class=\"comment\"># Markdown/MDX posts</span>\n    │   ├── <span class=\"dir\">components/</span>\n    │   │   ├── Nav.astro\n    │   │   └── <span class=\"dir\">islands/</span>\n    │   │       ├── SearchBar.tsx      <span class=\"comment\"># React island</span>\n    │   │       └── Cart.svelte        <span class=\"comment\"># Svelte island</span>\n    │   ├── <span class=\"dir\">layouts/</span>\n    │   └── <span class=\"dir\">lib/</span>\n    │       └── api-client.ts          <span class=\"comment\"># Express HTTP client</span>\n    ├── astro.config.mjs\n    └── package.json\n    <span class=\"dir\">apps/</span>api/                            <span class=\"comment\"># Express</span>\n    ├── <span class=\"dir\">src/</span>\n    │   ├── index.ts\n    │   ├── app.ts\n    │   ├── <span class=\"dir\">routes/</span>\n    │   ├── <span class=\"dir\">controllers/</span>\n    │   ├── <span class=\"dir\">services/</span>\n    │   ├── <span class=\"dir\">repositories/</span>\n    │   └── <span class=\"dir\">middleware/</span>\n    └── package.json\n</div>",
+        "fullWidth": true,
+        "tier": "serious"
+      },
+      {
+        "title": "Why This Combination Works",
+        "svgIcon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z\"/></svg>",
+        "contentHtml": "<p>Astro's island architecture is the correct model for content sites: ship HTML, hydrate only what needs JavaScript. Express provides a battle-tested API layer for the dynamic parts. The separation is clean: Astro owns content rendering and page structure; Express owns business logic and data. You can use React, Svelte, and Vue components in the same Astro page — each as an independent island. For content-driven sites with interactive features, this is the optimal architecture.</p>",
+        "fullWidth": false,
+        "tier": "serious"
+      },
+      {
+        "title": "When Not To Use This Stack",
+        "svgIcon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z\"/></svg>",
+        "contentHtml": "<p><strong>Don't use Astro + Express when:</strong> App is highly interactive (dashboards, real-time tools) — Next.js or SvelteKit handles client state better. Entire app is behind auth — Astro's static-first approach adds complexity. Need SPA-like navigation — Astro does full page loads by default.</p>",
+        "fullWidth": false,
+        "tier": "serious"
+      },
+      {
+        "title": "Complementary Stack",
+        "svgIcon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><rect x=\"2\" y=\"3\" width=\"20\" height=\"14\" rx=\"2\" /><line x1=\"8\" y1=\"21\" x2=\"16\" y2=\"21\" /><line x1=\"12\" y1=\"17\" x2=\"12\" y2=\"21\" /></svg>",
+        "contentHtml": "<table class=\"fw-table\"><tr><th>Concern</th><th>Library</th></tr><tr><td>Frontend</td><td>Astro (Islands Architecture)</td></tr><tr><td>Backend</td><td>Express / Fastify</td></tr><tr><td>Content</td><td>Astro Content Collections (MDX)</td></tr><tr><td>Interactive Islands</td><td>React / Svelte / Vue / Solid</td></tr><tr><td>ORM</td><td>Drizzle / Prisma</td></tr><tr><td>Auth</td><td>Lucia Auth / Passport.js</td></tr><tr><td>Styling</td><td>Tailwind CSS</td></tr><tr><td>Testing</td><td>Vitest + Playwright</td></tr><tr><td>Deploy</td><td>Vercel (Astro) + Railway (Express)</td></tr></table>",
+        "fullWidth": false,
+        "tier": "all"
+      }
+    ]
+  },
+  {
+    "id": "react-express",
+    "cat": "fullstack",
+    "name": "React SPA + Express",
+    "icon": "RE",
+    "archBadge": "Vite SPA + 3-Tier Service Layer",
+    "blocks": [
+      {
+        "title": "Golden Standard Architecture",
+        "svgIcon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5\"/></svg>",
+        "contentHtml": "<p><strong>The most common fullstack pairing in production.</strong> React (Vite) SPA on the frontend. Express/Fastify 3-Tier API on the backend. This is the default architecture for teams that need a simple, proven, well-understood stack. React handles routing and UI state (Zustand). TanStack Query owns server cache. Express routes → controllers → services → repositories. No SSR complexity, no framework magic — just a clean separation of concerns with the largest ecosystem on both sides.</p>",
+        "fullWidth": false,
+        "tier": "serious"
+      },
+      {
+        "title": "Data & Request Flow",
+        "svgIcon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><polyline points=\"22 12 18 12 15 21 9 3 6 12 2 12\"/></svg>",
+        "contentHtml": "<ul><li><strong>Browser (SPA) → Express API → DB</strong> — React fetches JSON from Express; no SSR, no BFF layer</li><li><strong>Express 3-Tier:</strong> Routes (HTTP) → Controllers (validate + respond) → Services (business logic) → Repositories (data access)</li><li><strong>Zustand</strong> — global UI state (auth, theme, notifications); selector-based subscriptions</li><li><strong>TanStack Query v5</strong> — server state cache, background refetch, optimistic updates, infinite queries</li><li><strong>React Router v7</strong> — client-side routing with loaders (fetch data before render) and actions (handle mutations)</li><li><strong>JWT auth flow</strong> — login → Express returns access + refresh tokens → React stores in memory/Zustand → interceptor attaches to requests</li></ul>",
+        "fullWidth": false,
+        "tier": "serious"
+      },
+      {
+        "title": "Monorepo Directory Structure",
+        "svgIcon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z\"/></svg>",
+        "contentHtml": "<div class=\"fw-tree\">\n    <span class=\"dir\">apps/</span>web/                            <span class=\"comment\"># React + Vite</span>\n    ├── <span class=\"dir\">src/</span>\n    │   ├── main.tsx\n    │   ├── App.tsx                    <span class=\"comment\"># Router + QueryClient + providers</span>\n    │   ├── <span class=\"dir\">features/</span>\n    │   │   ├── <span class=\"dir\">auth/</span>\n    │   │   │   ├── LoginPage.tsx\n    │   │   │   ├── useAuth.ts\n    │   │   │   ├── authStore.ts       <span class=\"comment\"># Zustand</span>\n    │   │   │   └── authApi.ts         <span class=\"comment\"># API calls</span>\n    │   │   ├── <span class=\"dir\">dashboard/</span>\n    │   │   └── <span class=\"dir\">profile/</span>\n    │   ├── <span class=\"dir\">shared/</span>\n    │   │   ├── <span class=\"dir\">components/</span>\n    │   │   └── <span class=\"dir\">utils/</span>\n    │   └── <span class=\"dir\">lib/</span>\n    │       ├── api-client.ts          <span class=\"comment\"># Axios/fetch wrapper</span>\n    │       └── query-client.ts        <span class=\"comment\"># TanStack Query config</span>\n    ├── vite.config.ts\n    └── package.json\n    <span class=\"dir\">apps/</span>api/                            <span class=\"comment\"># Express</span>\n    ├── <span class=\"dir\">src/</span>\n    │   ├── index.ts\n    │   ├── app.ts\n    │   ├── <span class=\"dir\">routes/</span>\n    │   │   ├── auth.routes.ts\n    │   │   ├── users.routes.ts\n    │   │   └── index.ts\n    │   ├── <span class=\"dir\">controllers/</span>\n    │   ├── <span class=\"dir\">services/</span>\n    │   ├── <span class=\"dir\">repositories/</span>\n    │   ├── <span class=\"dir\">middleware/</span>\n    │   ├── <span class=\"dir\">validators/</span>              <span class=\"comment\"># Zod schemas</span>\n    │   └── <span class=\"dir\">config/</span>\n    └── package.json\n    <span class=\"dir\">packages/</span>shared/\n    └── <span class=\"dir\">src/</span>\n        ├── types.ts                   <span class=\"comment\"># API DTOs</span>\n        └── validation.ts              <span class=\"comment\"># Shared Zod schemas</span>\n</div>",
+        "fullWidth": true,
+        "tier": "serious"
+      },
+      {
+        "title": "Small Project (Co-located)",
+        "svgIcon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5\"/></svg>",
+        "contentHtml": "<p><strong>For smaller projects, serve the SPA from Express.</strong> Build React to <code>dist/</code>, serve it as static files from Express. Single deploy, no CORS, no monorepo. Express API routes at <code>/api/*</code>, React SPA catches everything else.</p>",
+        "fullWidth": false,
+        "tier": "small"
+      },
+      {
+        "title": "Small Project Structure",
+        "svgIcon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z\"/></svg>",
+        "contentHtml": "<div class=\"fw-tree\">\n    <span class=\"dir\">client/</span>                          <span class=\"comment\"># React + Vite</span>\n    ├── <span class=\"dir\">src/</span>\n    │   ├── main.tsx\n    │   ├── App.tsx\n    │   ├── <span class=\"dir\">pages/</span>\n    │   └── <span class=\"dir\">components/</span>\n    └── package.json\n    <span class=\"dir\">server/</span>                          <span class=\"comment\"># Express</span>\n    ├── <span class=\"dir\">src/</span>\n    │   ├── index.ts                    <span class=\"comment\"># Serve static + API routes</span>\n    │   ├── <span class=\"dir\">routes/</span>\n    │   └── <span class=\"dir\">services/</span>\n    └── package.json\n    package.json                        <span class=\"comment\"># Root: concurrently scripts</span>\n</div>",
+        "fullWidth": true,
+        "tier": "small"
+      },
+      {
+        "title": "Why This Combination Works",
+        "svgIcon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z\"/></svg>",
+        "contentHtml": "<p>This is the most deployed fullstack architecture. React's ecosystem (component libraries, state management, devtools) is unmatched. Express's simplicity means zero learning curve for the backend. The SPA + API separation has been battle-tested for a decade. It's not the most modern, not the most performant, but it's the most proven, the most documented, and the easiest to hire for. When in doubt, this is the safe choice.</p>",
+        "fullWidth": false,
+        "tier": "serious"
+      },
+      {
+        "title": "When Not To Use This Stack",
+        "svgIcon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z\"/></svg>",
+        "contentHtml": "<p><strong>Don't use React SPA + Express when:</strong> SEO is critical — SPAs need extra SSR setup. You want SSR by default — Next.js, Remix, or SvelteKit are better. Backend needs structured DI — NestJS or Spring Boot provide more. Bundle size is critical — Svelte/Solid ship less JS.</p>",
+        "fullWidth": false,
+        "tier": "serious"
+      },
+      {
+        "title": "Complementary Stack",
+        "svgIcon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><rect x=\"2\" y=\"3\" width=\"20\" height=\"14\" rx=\"2\" /><line x1=\"8\" y1=\"21\" x2=\"16\" y2=\"21\" /><line x1=\"12\" y1=\"17\" x2=\"12\" y2=\"21\" /></svg>",
+        "contentHtml": "<table class=\"fw-table\"><tr><th>Concern</th><th>Library</th></tr><tr><td>Frontend</td><td>React 19 + Vite</td></tr><tr><td>Backend</td><td>Express / Fastify</td></tr><tr><td>State (UI)</td><td>Zustand</td></tr><tr><td>State (Server)</td><td>TanStack Query v5</td></tr><tr><td>Router</td><td>React Router v7</td></tr><tr><td>Validation</td><td>Zod (shared)</td></tr><tr><td>ORM</td><td>Drizzle / Prisma</td></tr><tr><td>Auth</td><td>Passport.js + JWT</td></tr><tr><td>Forms</td><td>React Hook Form + Zod</td></tr><tr><td>Testing</td><td>Vitest + Playwright</td></tr><tr><td>Deploy</td><td>Static S3/CloudFront (FE) + Railway/Docker (API)</td></tr></table>",
+        "fullWidth": false,
+        "tier": "all"
+      }
+    ]
+  },
 ];

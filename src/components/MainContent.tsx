@@ -15,7 +15,6 @@ function MainContentInner({ frameworks }: MainContentProps) {
   const q = searchParams.get("q")?.toLowerCase().trim() || "";
   const activeCat = searchParams.get("cat") || "all";
 
-  // Filter frameworks on the client based on query & category
   const filteredFrameworks = frameworks.filter((fw) => {
     const matchesCat = activeCat === "all" || fw.cat === activeCat;
     const matchesQuery = !q || fw.name.toLowerCase().includes(q) || fw.id.includes(q);
@@ -25,7 +24,9 @@ function MainContentInner({ frameworks }: MainContentProps) {
   const mobileFws = filteredFrameworks.filter((f) => f.cat === "mobile");
   const frontendFws = filteredFrameworks.filter((f) => f.cat === "frontend");
   const backendFws = filteredFrameworks.filter((f) => f.cat === "backend");
+  const fullstackFws = filteredFrameworks.filter((f) => f.cat === "fullstack");
   const desktopFws = filteredFrameworks.filter((f) => f.cat === "desktop");
+  const aiFws = filteredFrameworks.filter((f) => f.cat === "ai");
 
   const totalCount = filteredFrameworks.length;
 
@@ -35,7 +36,7 @@ function MainContentInner({ frameworks }: MainContentProps) {
 
       {totalCount === 0 ? (
         <div style={{ padding: "60px 0", textAlign: "center", color: "var(--text-secondary)" }}>
-          <h3>No frameworks found matching "{q}"</h3>
+          <h3>{`No frameworks found matching "${q}"`}</h3>
           <p style={{ marginTop: "8px", fontSize: "14px", color: "var(--text-muted)" }}>
             Try adjusting your search query or switching categories.
           </p>
@@ -93,6 +94,23 @@ function MainContentInner({ frameworks }: MainContentProps) {
             </>
           )}
 
+          {/* FULLSTACK */}
+          {fullstackFws.length > 0 && (
+            <>
+              <div className="section-header cat-section" data-cat="fullstack">
+                <h2>Fullstack Architectures</h2>
+                <p className="section-desc">
+                  Cross-layer combinations pairing UI frameworks with dedicated API backends for production-grade separation of concerns.
+                </p>
+              </div>
+              <div className="frameworks-grid cat-section" data-cat="fullstack">
+                {fullstackFws.map((fw) => (
+                  <FrameworkCard key={fw.id} framework={fw} />
+                ))}
+              </div>
+            </>
+          )}
+
           {/* DESKTOP */}
           {desktopFws.length > 0 && (
             <>
@@ -104,6 +122,23 @@ function MainContentInner({ frameworks }: MainContentProps) {
               </div>
               <div className="frameworks-grid cat-section" data-cat="desktop">
                 {desktopFws.map((fw) => (
+                  <FrameworkCard key={fw.id} framework={fw} />
+                ))}
+              </div>
+            </>
+          )}
+
+          {/* AI AGENT */}
+          {aiFws.length > 0 && (
+            <>
+              <div className="section-header cat-section" data-cat="ai">
+                <h2>AI Agent Architectures</h2>
+                <p className="section-desc">
+                  Production patterns for LLM-powered agents: tool augmentation, RAG pipelines, multi-agent orchestration, and vector data stores.
+                </p>
+              </div>
+              <div className="frameworks-grid cat-section" data-cat="ai">
+                {aiFws.map((fw) => (
                   <FrameworkCard key={fw.id} framework={fw} />
                 ))}
               </div>

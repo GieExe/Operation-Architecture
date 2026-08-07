@@ -5,7 +5,9 @@ export default function Sidebar() {
   const mobileFws = frameworks.filter((f) => f.cat === "mobile");
   const frontendFws = frameworks.filter((f) => f.cat === "frontend");
   const backendFws = frameworks.filter((f) => f.cat === "backend");
+  const fullstackFws = frameworks.filter((f) => f.cat === "fullstack");
   const desktopFws = frameworks.filter((f) => f.cat === "desktop");
+  const aiFws = frameworks.filter((f) => f.cat === "ai");
 
   const getCleanName = (name: string) => {
     if (name === "Next.js (React)") return "Next.js";
@@ -62,12 +64,36 @@ export default function Sidebar() {
         ))}
       </div>
 
+      {fullstackFws.length > 0 && (
+        <div className="sidebar-section">
+          <div className="sidebar-label">Fullstack</div>
+          {fullstackFws.map((fw) => (
+            <Link key={fw.id} className="sidebar-item" href={`/?cat=fullstack#${fw.id}`}>
+              <span className="cat-dot fullstack"></span>
+              {getCleanName(fw.name)}
+            </Link>
+          ))}
+        </div>
+      )}
+
       {desktopFws.length > 0 && (
         <div className="sidebar-section">
           <div className="sidebar-label">Desktop</div>
           {desktopFws.map((fw) => (
             <Link key={fw.id} className="sidebar-item" href={`/?cat=desktop#${fw.id}`}>
               <span className="cat-dot desktop"></span>
+              {getCleanName(fw.name)}
+            </Link>
+          ))}
+        </div>
+      )}
+
+      {aiFws.length > 0 && (
+        <div className="sidebar-section">
+          <div className="sidebar-label">AI Agent Architecture</div>
+          {aiFws.map((fw) => (
+            <Link key={fw.id} className="sidebar-item" href={`/?cat=ai#${fw.id}`}>
+              <span className="cat-dot ai"></span>
               {getCleanName(fw.name)}
             </Link>
           ))}
