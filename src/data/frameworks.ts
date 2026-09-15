@@ -92,6 +92,71 @@ export const frameworks: Framework[] = [
     ]
   },
   {
+    "id": "pytorch",
+    "cat": "ai",
+    "name": "PyTorch",
+    "icon": "PT",
+    "archBadge": "Module Component + Dynamic Computational Graph",
+    "blocks": [
+      {
+        "title": "Small Project Architecture",
+        "svgIcon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5\"/></svg>",
+        "contentHtml": "<p><strong>Script-based model & training loop in a single PyTorch repository.</strong> Define a <code>torch.nn.Module</code> subclass, load data using <code>Dataset</code> and <code>DataLoader</code>, and write an explicit training loop with <code>optimizer.zero_grad()</code>, <code>loss.backward()</code>, and <code>optimizer.step()</code>. Minimal boilerplate with instant Pythonic execution and native debugging.</p>",
+        "fullWidth": false,
+        "tier": "small"
+      },
+      {
+        "title": "Small Project Directory Structure",
+        "svgIcon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z\"/></svg>",
+        "contentHtml": "<div class=\"fw-tree\">\n<span class=\"dir\">src/</span>\n├── train.py              <span class=\"comment\"># Entry point & training loop</span>\n├── model.py              <span class=\"comment\"># nn.Module definition</span>\n├── dataset.py            <span class=\"comment\"># Dataset & DataLoader wrapper</span>\n└── config.py             <span class=\"comment\"># Hyperparameters & settings</span>\n</div>",
+        "fullWidth": true,
+        "tier": "small"
+      },
+      {
+        "title": "Golden Standard Architecture",
+        "svgIcon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5\"/></svg>",
+        "contentHtml": "<p><strong>Modular Deep Learning Architecture with PyTorch Lightning / Hugging Face Accelerate & TorchScript/ONNX Export.</strong> Business domain & deep learning research are cleanly separated into <code>nn.Module</code> neural network definitions, data pipelines, training orchestrators, and production export pipelines. Leverages dynamic computational graphs for flexible debugging alongside <code>torch.compile</code> (Inductor C++ backend) for production optimization.</p>",
+        "fullWidth": false,
+        "tier": "serious"
+      },
+      {
+        "title": "Data & State Flow",
+        "svgIcon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><polyline points=\"22 12 18 12 15 21 9 3 6 12 2 12\"/></svg>",
+        "contentHtml": "<ul><li><strong>Data Engine:</strong> Raw Data → <code>torch.utils.data.Dataset</code> → <code>DataLoader</code> (multi-process prefetching) → Tensors</li><li><strong>Forward Pass:</strong> Input Tensors → <code>nn.Module.forward()</code> → Dynamic Computational Graph Construction → Loss Computation</li><li><strong>Backward Pass & Optimization:</strong> <code>loss.backward()</code> computes gradients via Autograd → <code>optimizer.step()</code> updates parameters</li><li><strong>Production Compilation:</strong> <code>torch.compile()</code> fuses kernels and optimizes graph execution for CUDA/ROCm acceleration</li><li><strong>Export & Inference:</strong> Export to TorchScript / ONNX / TensorRT for low-latency production deployment</li></ul>",
+        "fullWidth": false,
+        "tier": "serious"
+      },
+      {
+        "title": "Directory Structure Blueprint",
+        "svgIcon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z\"/></svg>",
+        "contentHtml": "<div class=\"fw-tree\">\n    <span class=\"dir\">src/</span>\n    ├── <span class=\"dir\">models/</span>                       <span class=\"comment\"># Neural network architectures</span>\n    │   ├── backbone.py           <span class=\"comment\"># Core feature extractor</span>\n    │   ├── head.py               <span class=\"comment\"># Task heads (classification/detection)</span>\n    │   └── model.py              <span class=\"comment\"># Composite nn.Module</span>\n    ├── <span class=\"dir\">data/</span>                         <span class=\"comment\"># Data ingestion & transformations</span>\n    │   ├── dataset.py            <span class=\"comment\"># PyTorch Dataset implementation</span>\n    │   ├── datamodule.py         <span class=\"comment\"># PyTorch Lightning DataModule</span>\n    │   └── transforms.py         <span class=\"comment\"># Augmentation pipelines</span>\n    ├── <span class=\"dir\">training/</span>                     <span class=\"comment\"># Training engines & callbacks</span>\n    │   ├── trainer.py            <span class=\"comment\"># Training loop / LightningModule</span>\n    │   ├── metrics.py            <span class=\"comment\"># Evaluation metrics (torchmetrics)</span>\n    │   └── callbacks.py          <span class=\"comment\"># Checkpointing & early stopping</span>\n    ├── <span class=\"dir\">export/</span>                       <span class=\"comment\"># Model serialization for production</span>\n    │   ├── export_onnx.py        <span class=\"comment\"># ONNX exporter</span>\n    │   └── compile.py            <span class=\"comment\"># torch.compile / TorchScript export</span>\n    ├── <span class=\"dir\">utils/</span>                        <span class=\"comment\"># Logging, seed management, hardware utilities</span>\n    │   ├── logger.py             <span class=\"comment\"># Weights & Biases / MLflow logger</span>\n    │   └── config.py             <span class=\"comment\"># Hydra / Pydantic configuration</span>\n    └── train.py                      <span class=\"comment\"># Command line entry point</span>\n</div>",
+        "fullWidth": true,
+        "tier": "serious"
+      },
+      {
+        "title": "Why It's The Best Match",
+        "svgIcon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z\"/></svg>",
+        "contentHtml": "<p>PyTorch is the undisputed industry standard for AI research and production deep learning. Its dynamic computational graph (Eager Execution) makes debugging as simple as setting a standard Python breakpoint. With <code>torch.compile</code> in PyTorch 2.x, teams get the speed of compiled C++/CUDA kernels without sacrificing Pythonic flexibility.</p>",
+        "fullWidth": false,
+        "tier": "serious"
+      },
+      {
+        "title": "When Not To Use PyTorch",
+        "svgIcon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z\"/></svg>",
+        "contentHtml": "<p><strong>Don't use PyTorch when:</strong> You are doing traditional tabular machine learning — scikit-learn or XGBoost/LightGBM is far simpler and faster to train. You are deploying ultra-lightweight models to microcontrollers where C-native frameworks (TensorFlow Lite / Micro) are required.</p>",
+        "fullWidth": false,
+        "tier": "serious"
+      },
+      {
+        "title": "Complementary Stack",
+        "svgIcon": "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><rect x=\"2\" y=\"3\" width=\"20\" height=\"14\" rx=\"2\" /><line x1=\"8\" y1=\"21\" x2=\"16\" y2=\"21\" /><line x1=\"12\" y1=\"17\" x2=\"12\" y2=\"21\" /></svg>",
+        "contentHtml": "<table class=\"fw-table\"><tr><th>Concern</th><th>Library</th></tr><tr><td>High-Level Engine</td><td>PyTorch Lightning / Hugging Face Accelerate</td></tr><tr><td>Model Ecosystem</td><td>Hugging Face Transformers / torchvision / torchaudio</td></tr><tr><td>Metrics & Evaluation</td><td>TorchMetrics</td></tr><tr><td>Experiment Tracking</td><td>Weights & Biases / MLflow / TensorBoard</td></tr><tr><td>Distributed Training</td><td>DeepSpeed / FSDP (Fully Sharded Data Parallel)</td></tr><tr><td>Inference Engine</td><td>vLLM / TensorRT-LLM / Triton Inference Server</td></tr><tr><td>Configuration</td><td>Hydra / Pydantic Settings</td></tr></table>",
+        "fullWidth": false,
+        "tier": "all"
+      }
+    ]
+  },
+  {
     "id": "flutter",
     "cat": "mobile",
     "name": "Flutter",
