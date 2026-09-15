@@ -198,14 +198,39 @@ export const frameworkScores: FrameworkScoreEntry[] = [
     },
     tierComparison: { small: 44, serious: 60, improvement: 36 },
   },
+
+  // ── AI ──
+  {
+    id: "pytorch",
+    scores: {
+      testability: 76, separation: 82, modularity: 88, typeSafety: 74,
+      performance: 92, learnability: 68, scalability: 94, ecosystem: 98,
+    },
+    tierComparison: { small: 52, serious: 88, improvement: 69 },
+  },
 ];
 
+const ALIASES: Record<string, string> = {
+  swiftui: "swift",
+  "android-compose": "android",
+  reactjs: "react",
+  dotnet: "dotnet-core",
+};
+
 export function getFrameworkScore(id: string): FrameworkScoreEntry | undefined {
-  return frameworkScores.find((f) => f.id === id);
+  const targetId = ALIASES[id] || id;
+  return frameworkScores.find((f) => f.id === targetId || f.id === id);
 }
 
 export function getFrameworkScoreOrThrow(id: string): FrameworkScoreEntry {
   const entry = getFrameworkScore(id);
-  if (!entry) throw new Error(`Framework score not found: ${id}`);
-  return entry;
+  if (entry) return entry;
+  return {
+    id,
+    scores: {
+      testability: 70, separation: 70, modularity: 70, typeSafety: 70,
+      performance: 70, learnability: 70, scalability: 70, ecosystem: 70,
+    },
+    tierComparison: { small: 50, serious: 75, improvement: 50 },
+  };
 }

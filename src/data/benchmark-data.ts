@@ -46,10 +46,21 @@ export const benchmarkData: FrameworkBenchmark[] = [
   // ── DESKTOP ──
   { id: "dotnet-wpf", name: ".NET WPF", category: "desktop", perfTier: "A", perfNotes: "Native Windows rendering. DirectX-accelerated. Very fast for data-heavy desktop apps.", coldStartMs: 400, bundleKb: null, memoryMb: 50, npmDownloads: null, soUsagePct: 7.6, sojsRetention: null, stars: null },
   { id: "electron", name: "Electron", category: "desktop", perfTier: "C", perfNotes: "Full Chromium instance per app. ~150MB RAM minimum. Slow cold start. Heavy but most flexible.", coldStartMs: 3000, bundleKb: 75000, memoryMb: 150, npmDownloads: null, soUsagePct: null, sojsRetention: 62, stars: 116000 },
+
+  // ── AI ──
+  { id: "pytorch", name: "PyTorch", category: "ai", perfTier: "S", perfNotes: "C++/CUDA accelerated core via torch.compile & Inductor. Dynamic computational graph execution.", coldStartMs: 500, bundleKb: null, memoryMb: 450, npmDownloads: null, soUsagePct: 10.5, sojsRetention: null, stars: 86000 },
 ];
 
+const ALIASES: Record<string, string> = {
+  swiftui: "swift",
+  "android-compose": "android",
+  reactjs: "react",
+  dotnet: "dotnet-core",
+};
+
 export function getBenchmark(id: string): FrameworkBenchmark | undefined {
-  return benchmarkData.find((b) => b.id === id);
+  const targetId = ALIASES[id] || id;
+  return benchmarkData.find((b) => b.id === targetId || b.id === id);
 }
 
 export function getBenchmarksByCategory(cat: string): FrameworkBenchmark[] {
