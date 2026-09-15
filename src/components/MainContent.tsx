@@ -1,7 +1,7 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
-import { Suspense } from "react";
+import { Suspense, useMemo } from "react";
 import FilterBar from "./FilterBar";
 import FrameworkCard from "./FrameworkCard";
 import { Framework } from "../data/frameworks";
@@ -10,16 +10,59 @@ interface MainContentProps {
   frameworks: Framework[];
 }
 
+const CAT_LABELS: Record<string, string> = {
+  mobile: "mobile iOS Android cross-platform",
+  frontend: "frontend web UI client SSR SPA",
+  backend: "backend server API microservices ORM DB",
+  fullstack: "fullstack web API frontend backend monorepo",
+  desktop: "desktop Windows GUI cross-platform",
+  ai: "ai agent LLM vector RAG orchestration prompt",
+};
+
+function extractPlainText(html: string): string {
+  return html.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
+}
+
 function MainContentInner({ frameworks }: MainContentProps) {
   const searchParams = useSearchParams();
   const q = searchParams.get("q")?.toLowerCase().trim() || "";
   const activeCat = searchParams.get("cat") || "all";
 
-  const filteredFrameworks = frameworks.filter((fw) => {
-    const matchesCat = activeCat === "all" || fw.cat === activeCat;
-    const matchesQuery = !q || fw.name.toLowerCase().includes(q) || fw.id.includes(q);
-    return matchesCat && matchesQuery;
-  });
+  // Pre-build indexed search strings per framework using useMemo for sub-millisecond search across all architecture blocks
+  const indexedFrameworks = useMemo(() => {
+    return frameworks.map((fw) => {
+      const blocksText = fw.blocks
+        .map((b) => `${b.title} ${extractPlainText(b.contentHtml)}`)
+        .join(" ");
+      const categoryExtra = CAT_LABELS[fw.cat] || "";
+      const searchBlob = `${fw.name} ${fw.id} ${fw.archBadge} ${fw.cat} ${categoryExtra} ${blocksText}`.toLowerCase();
+
+      return {
+        framework: fw,
+        searchBlob,
+      };
+    });
+  }, [frameworks]);
+
+  // Tokenize search query and match all tokens against indexed searchBlob
+  const filteredFrameworks = useMemo(() => {
+    if (!q) {
+      return indexedFrameworks
+        .filter((item) => activeCat === "all" || item.framework.cat === activeCat)
+        .map((item) => item.framework);
+    }
+
+    const tokens = q.split(/\s+/).filter(Boolean);
+
+    return indexedFrameworks
+      .filter((item) => {
+        const matchesCat = activeCat === "all" || item.framework.cat === activeCat;
+        if (!matchesCat) return false;
+
+        return tokens.every((token) => item.searchBlob.includes(token));
+      })
+      .map((item) => item.framework);
+  }, [indexedFrameworks, q, activeCat]);
 
   const mobileFws = filteredFrameworks.filter((f) => f.cat === "mobile");
   const frontendFws = filteredFrameworks.filter((f) => f.cat === "frontend");
@@ -31,14 +74,39 @@ function MainContentInner({ frameworks }: MainContentProps) {
   const totalCount = filteredFrameworks.length;
 
   return (
-    <div className="content-container">
+    <div className="content-container" id="frameworks">
       <FilterBar activeCat={activeCat} searchQuery={q} />
+
+      {q ? (
+        <div
+          style={{
+            margin: "20px 60px 0",
+            padding: "12px 20px",
+            background: "var(--bg-surface)",
+            border: "1px solid var(--border)",
+            borderRadius: "8px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            fontSize: "13px",
+            color: "var(--text-secondary)",
+          }}
+        >
+          <div>
+            Showing <strong style={{ color: "var(--accent)" }}>{totalCount}</strong>{" "}
+            {totalCount === 1 ? "framework" : "frameworks"} matching &quot;{q}&quot;
+            {activeCat !== "all" ? (
+              <span> in <strong style={{ color: "var(--text-primary)" }}>{activeCat}</strong></span>
+            ) : null}
+          </div>
+        </div>
+      ) : null}
 
       {totalCount === 0 ? (
         <div style={{ padding: "60px 0", textAlign: "center", color: "var(--text-secondary)" }}>
           <h3>{`No frameworks found matching "${q}"`}</h3>
           <p style={{ marginTop: "8px", fontSize: "14px", color: "var(--text-muted)" }}>
-            Try adjusting your search query or switching categories.
+            Try adjusting your search query or switching category filters.
           </p>
         </div>
       ) : (

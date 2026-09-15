@@ -68,7 +68,7 @@ Every framework includes **two architecture tiers**:
 
 ## ✨ Features
 
-- **🔍 Search** — Filter frameworks by name with instant results via server-side query params
+- **🔍 Deep Architecture Search** — Multi-field tokenized search across framework names, architecture badges, categories, directory blueprints, and complementary tech stacks with debounced URL synchronization
 - **🏷️ Category Filters** — Toggle between All, Mobile, Frontend, Backend, Fullstack, Desktop, and AI Agent views
 - **🔄 Architecture Tiers** — Each framework card toggles between small-project and serious-project blueprints
 - **📐 Golden Standard Architecture** — Detailed breakdown of each framework's recommended architecture pattern
@@ -129,7 +129,7 @@ src/
 
 Key design decisions:
 
-- **Server Components** — Page rendering, filtering, and data loading happen on the server via Next.js App Router
+- **Server Components & Deep Search Indexing** — Page rendering and data loading use Next.js App Router Server Components, with sub-millisecond memoized tokenized search indexing across all framework architecture blocks and debounced URL synchronization
 - **CSS Variables** — A cohesive dark theme with gold accent (#e8a838) using custom CSS custom properties
 - **Zero Runtime Dependencies** — No UI libraries, state management, or CSS frameworks beyond Tailwind 4
 - **Custom Fonts** — Instrument Serif (display), Space Grotesk (body), DM Mono (monospace) for a refined typographic hierarchy
